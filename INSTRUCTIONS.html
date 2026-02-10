@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Annotation Tool - Setup Instructions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            color: #1a1a1a;
+            background: #f8f9fa;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 3rem;
+        }
+
+        h1 {
+            color: #2d5a4a;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #e8f0ed;
+        }
+
+        h2 {
+            color: #2d5a4a;
+            font-size: 1.4rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e8f0ed;
+        }
+
+        h3 {
+            color: #333;
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #444;
+        }
+
+        ul, ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            color: #444;
+        }
+
+        code {
+            background: #f0f0f0;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #d63384;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin: 1rem 0;
+        }
+
+        .success {
+            background: #d4edda;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            margin: 1rem 0;
+        }
+
+        .info {
+            background: #e8f0ed;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #2d5a4a;
+            margin: 1rem 0;
+        }
+
+        .warning {
+            background: #f8d7da;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #dc3545;
+            margin: 1rem 0;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin-top: 1rem;
+            margin-bottom: 0;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: #e9ecef;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .tab:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .tab:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .tab.active {
+            background: #2d5a4a;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 8px;
+            margin-bottom: 1rem;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2d5a4a;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: #2d5a4a;
+            color: white;
+            border-radius: 50%;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-right: 0.5rem;
+        }
+
+        .emoji {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e8f0ed;
+            margin: 2rem 0;
+        }
+
+        a {
+            color: #2d5a4a;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .toc {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .toc h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .toc li {
+            margin-bottom: 0.5rem;
+        }
+
+        .toc a {
+            color: #2d5a4a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Text Annotation Tool</h1>
+        <p class="subtitle">Setup Instructions for Annotators</p>
+
+        <div class="toc">
+            <h3>Quick Navigation</h3>
+            <ul>
+                <li><a href="#overview">Overview - What You'll Be Doing</a></li>
+                <li><a href="#step1">Step 1: Download the Files</a></li>
+                <li><a href="#step2">Step 2: Install Python</a></li>
+                <li><a href="#step3">Step 3: Start the Tool</a></li>
+                <li><a href="#step4">Step 4: Begin Annotating</a></li>
+                <li><a href="#breaks">Taking Breaks & Resuming</a></li>
+                <li><a href="#finished">When You're Finished</a></li>
+                <li><a href="#troubleshooting">Troubleshooting</a></li>
+            </ul>
+        </div>
+
+        <h2 id="overview"><span class="emoji">📋</span> What You'll Be Doing</h2>
+        <p>You'll be reading short text responses that participants wrote about various political topics. For each response, you'll annotate:</p>
+        <ul>
+            <li><strong>Emotions</strong> present in the text</li>
+            <li><strong>Sentiment</strong> (positive/negative/neutral)</li>
+            <li><strong>Moral foundations</strong> expressed</li>
+            <li><strong>Political inference</strong> based on the text</li>
+        </ul>
+        <div class="success">
+            <strong>Good news!</strong> Your progress is saved automatically after each annotation, so you can take breaks and resume later.
+        </div>
+
+        <h2 id="step1"><span class="step-number">1</span> Download the Annotation Files</h2>
+        <ol>
+            <li>Download the <code>annotation_files</code> folder that was shared with you</li>
+            <li>Save it somewhere easy to find (like your <strong>Desktop</strong> or <strong>Documents</strong> folder)</li>
+            <li><strong>Important:</strong> Remember where you saved it!</li>
+        </ol>
+
+        <h2 id="step2"><span class="step-number">2</span> Install Python (if you don't have it)</h2>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('mac-install')">🍎 Mac</button>
+            <button class="tab" onclick="showTab('windows-install')">🪟 Windows</button>
+        </div>
+
+        <div id="mac-install" class="tab-content active">
+            <h3>Check if you already have Python</h3>
+            <ol>
+                <li>Open <strong>Terminal</strong> (press <code>Cmd + Space</code>, type "Terminal", press Enter)</li>
+                <li>Type this command and press Enter:</li>
+            </ol>
+            <div class="code-block">python3 --version</div>
+            <ul>
+                <li>If you see something like <code>Python 3.x.x</code>, you're good! Skip to Step 3.</li>
+                <li>If you see "command not found", continue below.</li>
+            </ul>
+
+            <h3>Install Python on Mac</h3>
+            <ol>
+                <li>Go to <a href="https://www.python.org/downloads/" target="_blank">python.org/downloads</a></li>
+                <li>Click the big yellow "Download Python" button</li>
+                <li>Open the downloaded file and follow the installation steps</li>
+                <li>Restart Terminal and try <code>python3 --version</code> again</li>
+            </ol>
+        </div>
+
+        <div id="windows-install" class="tab-content">
+            <h3>Check if you already have Python</h3>
+            <ol>
+                <li>Open <strong>Command Prompt</strong> (press <code>Windows key</code>, type "cmd", press Enter)</li>
+                <li>Type this command and press Enter:</li>
+            </ol>
+            <div class="code-block">python --version</div>
+            <ul>
+                <li>If you see something like <code>Python 3.x.x</code>, you're good! Skip to Step 3.</li>
+                <li>If you see "'python' is not recognized", continue below.</li>
+            </ul>
+
+            <h3>Install Python on Windows</h3>
+            <ol>
+                <li>Go to <a href="https://www.python.org/downloads/" target="_blank">python.org/downloads</a></li>
+                <li>Click the big yellow "Download Python" button</li>
+            </ol>
+            <div class="warning">
+                <strong>⚠️ IMPORTANT:</strong> When installing, check the box that says <strong>"Add Python to PATH"</strong> at the bottom of the first screen!
+            </div>
+            <ol start="3">
+                <li>Click "Install Now"</li>
+                <li>Close and reopen Command Prompt, then try <code>python --version</code> again</li>
+            </ol>
+        </div>
+
+        <h2 id="step3"><span class="step-number">3</span> Start the Annotation Tool</h2>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('mac-start')">🍎 Mac</button>
+            <button class="tab" onclick="showTab('windows-start')">🪟 Windows</button>
+        </div>
+
+        <div id="mac-start" class="tab-content active">
+            <ol>
+                <li>Open <strong>Terminal</strong> (press <code>Cmd + Space</code>, type "Terminal", press Enter)</li>
+                <li>Navigate to the annotation_files folder. Type this command:</li>
+            </ol>
+            <div class="code-block">cd ~/Desktop/annotation_files</div>
+            <p>Or if you saved it in Documents:</p>
+            <div class="code-block">cd ~/Documents/annotation_files</div>
+            <div class="info">
+                <strong>💡 Tip:</strong> You can also type <code>cd </code> (with a space) and then drag the annotation_files folder into the Terminal window!
+            </div>
+            <ol start="3">
+                <li>Start the server by typing:</li>
+            </ol>
+            <div class="code-block">python3 server.py</div>
+            <ol start="4">
+                <li>You should see a message saying the server is running on <code>http://localhost:8000</code></li>
+            </ol>
+            <div class="highlight">
+                <strong>⚠️ Keep this Terminal window open!</strong> Don't close it while you're annotating.
+            </div>
+        </div>
+
+        <div id="windows-start" class="tab-content">
+            <ol>
+                <li>Open <strong>Command Prompt</strong> (press <code>Windows key</code>, type "cmd", press Enter)</li>
+                <li>Navigate to the annotation_files folder. Type this command:</li>
+            </ol>
+            <div class="code-block">cd Desktop\annotation_files</div>
+            <p>Or if you saved it in Documents:</p>
+            <div class="code-block">cd Documents\annotation_files</div>
+            <p>Or if you saved it in Downloads:</p>
+            <div class="code-block">cd Downloads\annotation_files</div>
+            <ol start="3">
+                <li>Start the server by typing:</li>
+            </ol>
+            <div class="code-block">python server.py</div>
+            <ol start="4">
+                <li>You should see a message saying the server is running on <code>http://localhost:8000</code></li>
+            </ol>
+            <div class="highlight">
+                <strong>⚠️ Keep this Command Prompt window open!</strong> Don't close it while you're annotating.
+            </div>
+        </div>
+
+        <h2 id="step4"><span class="step-number">4</span> Open the Tool & Start Annotating</h2>
+        <ol>
+            <li>Open your web browser (Chrome, Firefox, Safari, or Edge)</li>
+            <li>Go to this address:</li>
+        </ol>
+        <div class="code-block">http://localhost:8000</div>
+        <ol start="3">
+            <li>You should see the annotation tool welcome screen!</li>
+            <li><strong>Enter your username</strong> (use the username assigned to you)</li>
+            <li>Click <strong>"Start Annotating"</strong> to begin</li>
+        </ol>
+
+        <h3>For each text, you'll see:</h3>
+        <ul>
+            <li><strong>Context box</strong> - Shows what political statement the person was responding to and whether they agreed/disagreed</li>
+            <li><strong>Their response</strong> - The text you need to annotate</li>
+        </ul>
+
+        <h3>What to annotate:</h3>
+        <ol>
+            <li>Select the <strong>primary emotion</strong> (Anger, Joy, Sadness, or Optimism)</li>
+            <li>Rate the <strong>intensity of each emotion</strong> (1-7 scale)</li>
+            <li>Rate the <strong>sentiment</strong> (positive/neutral/negative and 1-7 scale)</li>
+            <li>Select <strong>Yes/No</strong> for each moral foundation</li>
+            <li>Make your <strong>political inference</strong> guess</li>
+        </ol>
+        <p>Click <strong>"Save & Next"</strong> to save your annotations and move to the next text.</p>
+        <div class="info">
+            <strong>💡 Tip:</strong> Click the "📖 Instructions" button in the top menu to see detailed explanations of each category while annotating.
+        </div>
+
+        <h2 id="breaks"><span class="emoji">☕</span> Taking Breaks & Resuming Later</h2>
+        
+        <h3>To take a break:</h3>
+        <ol>
+            <li>Just close the browser tab</li>
+            <li>In Terminal/Command Prompt, press <code>Ctrl + C</code> to stop the server</li>
+            <li>Close the Terminal/Command Prompt window</li>
+        </ol>
+
+        <h3>To resume later:</h3>
+        <ol>
+            <li>Open Terminal/Command Prompt again</li>
+            <li>Navigate to the annotation_files folder (same as Step 3)</li>
+            <li>Start the server again</li>
+            <li>Go to <code>http://localhost:8000</code> in your browser</li>
+            <li>Enter the <strong>same username</strong> you used before</li>
+            <li>Click <strong>"Resume Session"</strong> - your progress will be restored!</li>
+        </ol>
+
+        <h2 id="finished"><span class="emoji">🎉</span> When You're Finished</h2>
+        <ol>
+            <li>Complete all annotations</li>
+            <li>Your annotations are automatically saved in a file called <code>annotations_[your_username].csv</code></li>
+            <li>You can also click "Download Annotations (CSV)" on the completion screen as a backup</li>
+            <li>Close the browser</li>
+            <li>In Terminal/Command Prompt, press <code>Ctrl + C</code> to stop the server</li>
+            <li><strong>Send the <code>annotations_[your_username].csv</code> file back to the research team</strong></li>
+        </ol>
+
+        <h2 id="troubleshooting"><span class="emoji">🔧</span> Troubleshooting</h2>
+
+        <h3>"Address already in use" error</h3>
+        <p>The server might still be running from before.</p>
+        <ul>
+            <li><strong>Mac:</strong> In Terminal, type: <code>lsof -ti:8000 | xargs kill -9</code> then try starting the server again</li>
+            <li><strong>Windows:</strong> Close all Command Prompt windows and try again, or restart your computer</li>
+        </ul>
+
+        <h3>"python not found" or "python3 not found"</h3>
+        <ul>
+            <li>Make sure you installed Python (see Step 2)</li>
+            <li><strong>Windows:</strong> Make sure you checked "Add Python to PATH" during installation. You may need to reinstall Python with this option checked.</li>
+            <li>Try closing and reopening Terminal/Command Prompt</li>
+        </ul>
+
+        <h3>Page won't load in browser</h3>
+        <ul>
+            <li>Make sure the server is still running (check your Terminal/Command Prompt window)</li>
+            <li>Make sure you're going to <code>http://localhost:8000</code> (not https)</li>
+            <li>Try a different browser</li>
+        </ul>
+
+        <h3>"Server not running" message in the tool</h3>
+        <ul>
+            <li>Make sure you started the server with <code>python3 server.py</code> (Mac) or <code>python server.py</code> (Windows)</li>
+            <li>Make sure you're in the correct folder (the one containing server.py)</li>
+        </ul>
+
+        <h3>My progress wasn't saved!</h3>
+        <ul>
+            <li>Make sure you clicked "Save & Next" after each annotation</li>
+            <li>Make sure you used the <strong>exact same username</strong> when resuming</li>
+            <li>Check that the server was running the whole time</li>
+        </ul>
+
+        <hr>
+
+        <h2><span class="emoji">📞</span> Need Help?</h2>
+        <p>If you run into any issues not covered here, please contact the research team with:</p>
+        <ol>
+            <li>What operating system you're using (Mac or Windows)</li>
+            <li>What step you're stuck on</li>
+            <li>Any error messages you see (a screenshot helps!)</li>
+        </ol>
+
+        <hr>
+
+        <h2><span class="emoji">📋</span> Quick Reference</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Action</th>
+                    <th>Mac</th>
+                    <th>Windows</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Open terminal</td>
+                    <td><code>Cmd + Space</code>, type "Terminal"</td>
+                    <td><code>Windows key</code>, type "cmd"</td>
+                </tr>
+                <tr>
+                    <td>Navigate to folder</td>
+                    <td><code>cd ~/Desktop/annotation_files</code></td>
+                    <td><code>cd Desktop\annotation_files</code></td>
+                </tr>
+                <tr>
+                    <td>Start server</td>
+                    <td><code>python3 server.py</code></td>
+                    <td><code>python server.py</code></td>
+                </tr>
+                <tr>
+                    <td>Stop server</td>
+                    <td><code>Ctrl + C</code></td>
+                    <td><code>Ctrl + C</code></td>
+                </tr>
+                <tr>
+                    <td>Open tool</td>
+                    <td colspan="2" style="text-align: center;"><code>http://localhost:8000</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+        <p style="text-align: center; color: #666; margin-top: 2rem;">Thank you for participating in this study! 🙏</p>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            // Handle install tabs
+            if (tabId === 'mac-install' || tabId === 'windows-install') {
+                document.getElementById('mac-install').classList.remove('active');
+                document.getElementById('windows-install').classList.remove('active');
+                document.getElementById(tabId).classList.add('active');
+                
+                // Update tab buttons
+                const tabs = document.getElementById(tabId).previousElementSibling.querySelectorAll('.tab');
+                tabs.forEach(tab => tab.classList.remove('active'));
+                if (tabId === 'mac-install') tabs[0].classList.add('active');
+                else tabs[1].classList.add('active');
+            }
+            
+            // Handle start tabs
+            if (tabId === 'mac-start' || tabId === 'windows-start') {
+                document.getElementById('mac-start').classList.remove('active');
+                document.getElementById('windows-start').classList.remove('active');
+                document.getElementById(tabId).classList.add('active');
+                
+                // Update tab buttons
+                const tabs = document.getElementById(tabId).previousElementSibling.querySelectorAll('.tab');
+                tabs.forEach(tab => tab.classList.remove('active'));
+                if (tabId === 'mac-start') tabs[0].classList.add('active');
+                else tabs[1].classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

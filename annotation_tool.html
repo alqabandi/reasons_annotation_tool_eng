@@ -1,0 +1,2008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Annotation Tool</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #faf9f7;
+            --bg-secondary: #ffffff;
+            --bg-accent: #f0eeeb;
+            --text-primary: #1a1a1a;
+            --text-secondary: #5a5a5a;
+            --text-muted: #8a8a8a;
+            --accent-primary: #2d5a4a;
+            --accent-secondary: #4a8b7a;
+            --accent-light: #e8f0ed;
+            --border: #e0ddd8;
+            --shadow: rgba(0, 0, 0, 0.06);
+            --success: #3d8b6e;
+            --warning: #c4943d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 12px var(--shadow);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .progress-bar-wrapper {
+            width: 200px;
+            height: 8px;
+            background: var(--bg-accent);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        .progress-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .annotator-badge {
+            background: var(--accent-light);
+            color: var(--accent-primary);
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Main Layout */
+        .main-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Setup Screen */
+        .setup-screen {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 3rem;
+            box-shadow: 0 4px 24px var(--shadow);
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .setup-screen h1 {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--accent-primary);
+        }
+
+        .setup-screen p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .setup-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px var(--accent-light);
+        }
+
+        .file-upload {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--bg-accent);
+        }
+
+        .file-upload:hover {
+            border-color: var(--accent-secondary);
+            background: var(--accent-light);
+        }
+
+        .file-upload.dragover {
+            border-color: var(--accent-primary);
+            background: var(--accent-light);
+        }
+
+        .file-upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload-text {
+            color: var(--text-secondary);
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .btn {
+            padding: 0.875rem 1.75rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(45, 90, 74, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: var(--bg-accent);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        /* Annotation Screen */
+        .annotation-screen {
+            display: none;
+        }
+
+        .text-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 24px var(--shadow);
+            position: sticky;
+            top: 80px;
+            z-index: 50;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        /* Instructions Panel */
+        .instructions-toggle {
+            background: var(--accent-light);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .instructions-toggle:hover {
+            background: var(--accent-secondary);
+            color: white;
+        }
+
+        .instructions-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .instructions-panel.show {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .instructions-content {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .instructions-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--bg-accent);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .instructions-close:hover {
+            background: var(--border);
+        }
+
+        .instructions-content h2 {
+            font-family: 'Crimson Pro', Georgia, serif;
+            color: var(--accent-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .instructions-content h3 {
+            color: var(--accent-primary);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .instructions-content p, .instructions-content li {
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            line-height: 1.7;
+        }
+
+        .instructions-content ul {
+            padding-left: 1.5rem;
+        }
+
+        /* Button variations for resume state */
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        .text-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .text-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .text-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .statement-tag {
+            display: inline-block;
+            background: var(--accent-light);
+            color: var(--accent-primary);
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .response-id {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-family: 'Courier New', monospace;
+            text-align: right;
+        }
+
+        .text-content {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.35rem;
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+
+        /* Question Sections */
+        .question-section {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 24px var(--shadow);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .section-icon.emotions { background: #fef3e2; }
+        .section-icon.sentiment { background: #e8f4fd; }
+        .section-icon.moral { background: #f3e8fd; }
+        .section-icon.political { background: #e8fdf3; }
+
+        .section-title {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+
+        .question {
+            margin-bottom: 1.75rem;
+        }
+
+        .question:last-child {
+            margin-bottom: 0;
+        }
+
+        .question-text {
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .question-hint {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            font-style: italic;
+        }
+
+        /* Radio Options */
+        .options-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .option-btn {
+            padding: 0.625rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+
+        .option-btn:hover {
+            border-color: var(--accent-secondary);
+            background: var(--accent-light);
+        }
+
+        .option-btn.selected {
+            border-color: var(--accent-primary);
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .option-btn input {
+            display: none;
+        }
+
+        /* Likert Scale */
+        .likert-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .likert-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            padding: 0 0.5rem;
+        }
+
+        .likert-scale {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .likert-btn {
+            flex: 1;
+            padding: 0.75rem 0;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+
+        .likert-btn:hover {
+            border-color: var(--accent-secondary);
+            background: var(--accent-light);
+        }
+
+        .likert-btn.selected {
+            border-color: var(--accent-primary);
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        /* Yes/No Toggle */
+        .yesno-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .yesno-btn {
+            padding: 0.625rem 1.5rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            font-weight: 500;
+            font-family: inherit;
+        }
+
+        .yesno-btn:hover {
+            border-color: var(--accent-secondary);
+        }
+
+        .yesno-btn.selected.yes {
+            border-color: var(--success);
+            background: var(--success);
+            color: white;
+        }
+
+        .yesno-btn.selected.no {
+            border-color: #c45a5a;
+            background: #c45a5a;
+            color: white;
+        }
+
+        /* Moral Foundations Grid */
+        .moral-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .moral-item {
+            background: var(--bg-accent);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+        }
+
+        .moral-item .question-text {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .moral-definition {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            font-style: italic;
+        }
+
+        /* Navigation */
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .nav-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .nav-hint {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .nav-jump {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .nav-jump input {
+            width: 60px;
+            padding: 0.25rem 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-family: inherit;
+        }
+
+        .nav-jump button {
+            padding: 0.25rem 0.5rem;
+            background: var(--bg-accent);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        /* Complete Screen */
+        .complete-screen {
+            display: none;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .complete-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .complete-screen h2 {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 2rem;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+        }
+
+        .complete-screen p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--accent-primary);
+            color: white;
+            padding: 0.875rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .main-container {
+                padding: 1rem;
+            }
+
+            .text-card, .question-section {
+                padding: 1.5rem;
+            }
+
+            .moral-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        /* Validation error */
+        .validation-error {
+            color: #c45a5a;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .question.error .validation-error {
+            display: block;
+        }
+
+        .question.error .options-grid .option-btn,
+        .question.error .likert-btn,
+        .question.error .yesno-btn {
+            border-color: #e8b4b4;
+        }
+
+        /* Incomplete indicator */
+        .incomplete-badge {
+            background: var(--warning);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">📝 Annotation Tool</div>
+            <div class="progress-container" id="progressContainer" style="display: none;">
+                <div class="progress-bar-wrapper">
+                    <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                </div>
+                <span class="progress-text" id="progressText">0 / 0</span>
+            </div>
+            <button class="instructions-toggle" id="instructionsBtn">
+                📖 Instructions
+            </button>
+            <div class="annotator-badge" id="annotatorBadge" style="display: none;">
+                Annotator: <span id="annotatorDisplay"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Instructions Panel -->
+    <div class="instructions-panel" id="instructionsPanel">
+        <div class="instructions-content">
+            <button class="instructions-close" id="instructionsClose">×</button>
+            <h2>📖 Annotation Instructions</h2>
+            
+            <h3>Overview</h3>
+            <p>You will be reading short text responses and annotating them based on emotions, sentiment, moral foundations, and political inference.</p>
+            
+            <h3>How to Use This Tool</h3>
+            <ul>
+                <li><strong>Enter your username</strong> on the start screen - this creates your personal annotation file</li>
+                <li><strong>Read each text carefully</strong> before answering the questions</li>
+                <li><strong>Answer all questions</strong> for each text before clicking "Save & Next"</li>
+                <li><strong>Your progress is saved automatically</strong> after each annotation</li>
+                <li>You can <strong>close the browser and resume later</strong> - just enter the same username</li>
+            </ul>
+            
+            <h3>Annotation Categories</h3>
+            
+            <h4 style="color: var(--text-primary); margin-top: 1rem;">😊 Emotions</h4>
+            <ul>
+                <li><strong>Primary Emotion:</strong> Select the emotion that best represents the writer's mental state (Anger, Joy, Sadness, or Optimism)</li>
+                <li><strong>Emotion Intensity:</strong> Rate how much of each emotion (anger, joy, sadness, optimism) is present on a scale of 1-7</li>
+            </ul>
+            
+            <h4 style="color: var(--text-primary); margin-top: 1rem;">💭 Sentiment</h4>
+            <ul>
+                <li><strong>Sentiment Category:</strong> Is the overall sentiment Positive, Neutral, or Negative?</li>
+                <li><strong>Sentiment Scale:</strong> Rate from 1 (very negative) to 7 (very positive)</li>
+            </ul>
+            
+            <h4 style="color: var(--text-primary); margin-top: 1rem;">⚖️ Moral Foundations</h4>
+            <p>For each moral foundation, select "Yes" if the text expresses or relates to that value, "No" if it doesn't:</p>
+            <ul>
+                <li><strong>Care:</strong> Concern for the well-being and suffering of others</li>
+                <li><strong>Proportionality:</strong> People should receive outcomes proportional to their contributions</li>
+                <li><strong>Equality:</strong> Everyone should be treated the same regardless of background</li>
+                <li><strong>Loyalty:</strong> Faithfulness to one's group, family, or nation</li>
+                <li><strong>Authority:</strong> Respect for tradition, hierarchy, and legitimate authorities</li>
+                <li><strong>Purity:</strong> Concerns about sanctity, disgust, and contamination</li>
+            </ul>
+            
+            <h4 style="color: var(--text-primary); margin-top: 1rem;">🗳️ Political Inference</h4>
+            <p>Based solely on the text, which political party do you think the writer most likely identifies with? Select "Can't tell" if there's insufficient information.</p>
+            
+            <h3>Tips</h3>
+            <ul>
+                <li>The text you're annotating stays visible at the top as you scroll</li>
+                <li>Take breaks if needed - your progress is always saved</li>
+                <li>If you're unsure, go with your best judgment</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Setup Screen -->
+    <main class="main-container">
+        <div class="setup-screen" id="setupScreen">
+            <h1>Welcome, Annotator!</h1>
+            <p>Enter your username to begin annotating. Your progress is saved automatically after each annotation to your personal file.</p>
+            
+            <div class="setup-form">
+                <div class="form-group">
+                    <label for="annotatorId">Your Username</label>
+                    <input type="text" id="annotatorId" placeholder="e.g., john_doe">
+                    <small style="color: var(--text-muted); display: block; margin-top: 0.5rem;">
+                        Your annotations will be saved to: <strong id="filenamePreview">annotations_[username].csv</strong>
+                    </small>
+                </div>
+                
+                <div id="dataStatus" style="padding: 1rem; background: var(--bg-accent); border-radius: 8px; margin-bottom: 1rem;">
+                    <span id="loadingStatus">Loading data...</span>
+                </div>
+
+                <div id="buttonContainer">
+                    <button class="btn btn-primary btn-large" id="resumeBtn" style="display: none; width: 100%; margin-bottom: 0.75rem;">Resume Previous Session</button>
+                    <button class="btn btn-primary" id="startBtn" disabled style="width: 100%;">Start Annotating</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Annotation Screen -->
+        <div class="annotation-screen" id="annotationScreen">
+            <!-- Text Display -->
+            <div class="text-card fade-in">
+                <div class="context-box" id="contextBox" style="background: var(--bg-accent); padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.9rem;">
+                    <div style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Context: The participant was asked about this statement</div>
+                    <div id="statementText" style="color: var(--text-primary); font-weight: 500; margin-bottom: 0.5rem;"></div>
+                    <div id="agreeText" style="display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600;"></div>
+                </div>
+                <div class="text-label" style="margin-bottom: 0.5rem;">Their Response</div>
+                <div class="text-content" id="textContent"></div>
+            </div>
+
+            <!-- Emotions Section -->
+            <div class="question-section fade-in" style="animation-delay: 0.1s;">
+                <div class="section-header">
+                    <div class="section-icon emotions">😊</div>
+                    <h2 class="section-title">Emotions</h2>
+                </div>
+
+                <div class="question" data-field="emotion_categorical">
+                    <div class="question-text">Which emotion best represents the mental state of the writer?</div>
+                    <div class="options-grid">
+                        <label class="option-btn"><input type="radio" name="emotion_categorical" value="1">Anger</label>
+                        <label class="option-btn"><input type="radio" name="emotion_categorical" value="2">Joy</label>
+                        <label class="option-btn"><input type="radio" name="emotion_categorical" value="3">Sadness</label>
+                        <label class="option-btn"><input type="radio" name="emotion_categorical" value="4">Optimism</label>
+                    </div>
+                    <div class="validation-error">Please select an option</div>
+                </div>
+
+                <div class="question" data-field="emotion_anger_likert">
+                    <div class="question-text">How much <strong>anger</strong> is present in this text?</div>
+                    <div class="likert-container">
+                        <div class="likert-labels">
+                            <span>No anger</span>
+                            <span>A great deal</span>
+                        </div>
+                        <div class="likert-scale">
+                            <button class="likert-btn" data-value="1">1</button>
+                            <button class="likert-btn" data-value="2">2</button>
+                            <button class="likert-btn" data-value="3">3</button>
+                            <button class="likert-btn" data-value="4">4</button>
+                            <button class="likert-btn" data-value="5">5</button>
+                            <button class="likert-btn" data-value="6">6</button>
+                            <button class="likert-btn" data-value="7">7</button>
+                        </div>
+                    </div>
+                    <div class="validation-error">Please select a value</div>
+                </div>
+
+                <div class="question" data-field="emotion_joy_likert">
+                    <div class="question-text">How much <strong>joy</strong> is present in this text?</div>
+                    <div class="likert-container">
+                        <div class="likert-labels">
+                            <span>No joy</span>
+                            <span>A great deal</span>
+                        </div>
+                        <div class="likert-scale">
+                            <button class="likert-btn" data-value="1">1</button>
+                            <button class="likert-btn" data-value="2">2</button>
+                            <button class="likert-btn" data-value="3">3</button>
+                            <button class="likert-btn" data-value="4">4</button>
+                            <button class="likert-btn" data-value="5">5</button>
+                            <button class="likert-btn" data-value="6">6</button>
+                            <button class="likert-btn" data-value="7">7</button>
+                        </div>
+                    </div>
+                    <div class="validation-error">Please select a value</div>
+                </div>
+
+                <div class="question" data-field="emotion_sadness_likert">
+                    <div class="question-text">How much <strong>sadness</strong> is present in this text?</div>
+                    <div class="likert-container">
+                        <div class="likert-labels">
+                            <span>No sadness</span>
+                            <span>A great deal</span>
+                        </div>
+                        <div class="likert-scale">
+                            <button class="likert-btn" data-value="1">1</button>
+                            <button class="likert-btn" data-value="2">2</button>
+                            <button class="likert-btn" data-value="3">3</button>
+                            <button class="likert-btn" data-value="4">4</button>
+                            <button class="likert-btn" data-value="5">5</button>
+                            <button class="likert-btn" data-value="6">6</button>
+                            <button class="likert-btn" data-value="7">7</button>
+                        </div>
+                    </div>
+                    <div class="validation-error">Please select a value</div>
+                </div>
+
+                <div class="question" data-field="emotion_optimism_likert">
+                    <div class="question-text">How much <strong>optimism</strong> is present in this text?</div>
+                    <div class="likert-container">
+                        <div class="likert-labels">
+                            <span>No optimism</span>
+                            <span>A great deal</span>
+                        </div>
+                        <div class="likert-scale">
+                            <button class="likert-btn" data-value="1">1</button>
+                            <button class="likert-btn" data-value="2">2</button>
+                            <button class="likert-btn" data-value="3">3</button>
+                            <button class="likert-btn" data-value="4">4</button>
+                            <button class="likert-btn" data-value="5">5</button>
+                            <button class="likert-btn" data-value="6">6</button>
+                            <button class="likert-btn" data-value="7">7</button>
+                        </div>
+                    </div>
+                    <div class="validation-error">Please select a value</div>
+                </div>
+            </div>
+
+            <!-- Sentiment Section -->
+            <div class="question-section fade-in" style="animation-delay: 0.2s;">
+                <div class="section-header">
+                    <div class="section-icon sentiment">💭</div>
+                    <h2 class="section-title">Sentiment</h2>
+                </div>
+
+                <div class="question" data-field="sentiment_categorical">
+                    <div class="question-text">Is the sentiment of this text positive, neutral, or negative?</div>
+                    <div class="options-grid">
+                        <label class="option-btn"><input type="radio" name="sentiment_categorical" value="1">Positive</label>
+                        <label class="option-btn"><input type="radio" name="sentiment_categorical" value="2">Neutral</label>
+                        <label class="option-btn"><input type="radio" name="sentiment_categorical" value="3">Negative</label>
+                    </div>
+                    <div class="validation-error">Please select an option</div>
+                </div>
+
+                <div class="question" data-field="sentiment_likert">
+                    <div class="question-text">How negative or positive is this text?</div>
+                    <div class="likert-container">
+                        <div class="likert-labels">
+                            <span>Very negative</span>
+                            <span>Very positive</span>
+                        </div>
+                        <div class="likert-scale">
+                            <button class="likert-btn" data-value="1">1</button>
+                            <button class="likert-btn" data-value="2">2</button>
+                            <button class="likert-btn" data-value="3">3</button>
+                            <button class="likert-btn" data-value="4">4</button>
+                            <button class="likert-btn" data-value="5">5</button>
+                            <button class="likert-btn" data-value="6">6</button>
+                            <button class="likert-btn" data-value="7">7</button>
+                        </div>
+                    </div>
+                    <div class="validation-error">Please select a value</div>
+                </div>
+            </div>
+
+            <!-- Moral Foundations Section -->
+            <div class="question-section fade-in" style="animation-delay: 0.3s;">
+                <div class="section-header">
+                    <div class="section-icon moral">⚖️</div>
+                    <h2 class="section-title">Moral Foundations</h2>
+                </div>
+                <div class="question-hint">Does this text express any of the following moral foundations?</div>
+
+                <div class="moral-grid">
+                    <div class="moral-item">
+                        <div class="question" data-field="mf_care">
+                            <div class="question-text">Care</div>
+                            <div class="moral-definition">Concern for the well-being and suffering of others</div>
+                            <div class="yesno-container">
+                                <button class="yesno-btn yes" data-value="1">Yes</button>
+                                <button class="yesno-btn no" data-value="2">No</button>
+                            </div>
+                            <div class="validation-error">Please select</div>
+                        </div>
+                    </div>
+
+                    <div class="moral-item">
+                        <div class="question" data-field="mf_proportionality">
+                            <div class="question-text">Proportionality</div>
+                            <div class="moral-definition">People should receive outcomes proportional to their contributions</div>
+                            <div class="yesno-container">
+                                <button class="yesno-btn yes" data-value="1">Yes</button>
+                                <button class="yesno-btn no" data-value="2">No</button>
+                            </div>
+                            <div class="validation-error">Please select</div>
+                        </div>
+                    </div>
+
+                    <div class="moral-item">
+                        <div class="question" data-field="mf_equality">
+                            <div class="question-text">Equality</div>
+                            <div class="moral-definition">Everyone should be treated the same regardless of background</div>
+                            <div class="yesno-container">
+                                <button class="yesno-btn yes" data-value="1">Yes</button>
+                                <button class="yesno-btn no" data-value="2">No</button>
+                            </div>
+                            <div class="validation-error">Please select</div>
+                        </div>
+                    </div>
+
+                    <div class="moral-item">
+                        <div class="question" data-field="mf_loyalty">
+                            <div class="question-text">Loyalty</div>
+                            <div class="moral-definition">Faithfulness to one's group, family, or nation</div>
+                            <div class="yesno-container">
+                                <button class="yesno-btn yes" data-value="1">Yes</button>
+                                <button class="yesno-btn no" data-value="2">No</button>
+                            </div>
+                            <div class="validation-error">Please select</div>
+                        </div>
+                    </div>
+
+                    <div class="moral-item">
+                        <div class="question" data-field="mf_authority">
+                            <div class="question-text">Authority</div>
+                            <div class="moral-definition">Respect for tradition, hierarchy, and legitimate authorities</div>
+                            <div class="yesno-container">
+                                <button class="yesno-btn yes" data-value="1">Yes</button>
+                                <button class="yesno-btn no" data-value="2">No</button>
+                            </div>
+                            <div class="validation-error">Please select</div>
+                        </div>
+                    </div>
+
+                    <div class="moral-item">
+                        <div class="question" data-field="mf_purity">
+                            <div class="question-text">Purity</div>
+                            <div class="moral-definition">Concerns about sanctity, disgust, and contamination</div>
+                            <div class="yesno-container">
+                                <button class="yesno-btn yes" data-value="1">Yes</button>
+                                <button class="yesno-btn no" data-value="2">No</button>
+                            </div>
+                            <div class="validation-error">Please select</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Political Guess Section -->
+            <div class="question-section fade-in" style="animation-delay: 0.4s;">
+                <div class="section-header">
+                    <div class="section-icon political">🗳️</div>
+                    <h2 class="section-title">Political Inference</h2>
+                </div>
+
+                <div class="question" data-field="political_guess">
+                    <div class="question-text">Based on this text, which political party do you think the writer most likely identifies with?</div>
+                    <div class="options-grid">
+                        <label class="option-btn"><input type="radio" name="political_guess" value="1">Democrat</label>
+                        <label class="option-btn"><input type="radio" name="political_guess" value="2">Republican</label>
+                        <label class="option-btn"><input type="radio" name="political_guess" value="3">Independent/Neither</label>
+                        <label class="option-btn"><input type="radio" name="political_guess" value="4">Can't tell</label>
+                    </div>
+                    <div class="validation-error">Please select an option</div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="nav-container">
+                <div class="nav-info">
+                    <div class="nav-hint">
+                        <span id="currentIndex">1</span> of <span id="totalItems">0</span> items
+                    </div>
+                    <div class="nav-jump">
+                        Jump to: <input type="number" id="jumpInput" min="1"> 
+                        <button id="jumpBtn">Go</button>
+                    </div>
+                </div>
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" id="prevBtn">← Previous</button>
+                    <button class="btn btn-primary" id="nextBtn">Save & Next →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Complete Screen -->
+        <div class="complete-screen" id="completeScreen">
+            <div class="complete-icon">🎉</div>
+            <h2>All Done!</h2>
+            <p>You've completed all annotations. Thank you for your hard work!</p>
+            <button class="btn btn-primary" id="downloadBtn">Download Annotations (CSV)</button>
+            <div style="margin-top: 1rem;">
+                <button class="btn btn-secondary" id="reviewBtn">Review Annotations</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+
+    <script>
+        // ===== STATE =====
+        let state = {
+            annotatorId: '',
+            data: [],
+            annotations: {},  // keyed by unique row identifier (X value)
+            currentIndex: 0,
+            isComplete: false,
+            serverMode: true  // Whether we're running with the Python server
+        };
+
+        const STORAGE_KEY = 'annotation_tool_state_v2';
+        const API_BASE = '';  // Same origin
+
+        // ===== DOM ELEMENTS =====
+        const $ = id => document.getElementById(id);
+
+        const elements = {
+            setupScreen: $('setupScreen'),
+            annotationScreen: $('annotationScreen'),
+            completeScreen: $('completeScreen'),
+            progressContainer: $('progressContainer'),
+            progressBar: $('progressBar'),
+            progressText: $('progressText'),
+            annotatorBadge: $('annotatorBadge'),
+            annotatorDisplay: $('annotatorDisplay'),
+            annotatorId: $('annotatorId'),
+            dataStatus: $('dataStatus'),
+            loadingStatus: $('loadingStatus'),
+            filenamePreview: $('filenamePreview'),
+            startBtn: $('startBtn'),
+            resumeBtn: $('resumeBtn'),
+            buttonContainer: $('buttonContainer'),
+            contextBox: $('contextBox'),
+            statementText: $('statementText'),
+            agreeText: $('agreeText'),
+            textContent: $('textContent'),
+            currentIndex: $('currentIndex'),
+            totalItems: $('totalItems'),
+            prevBtn: $('prevBtn'),
+            nextBtn: $('nextBtn'),
+            downloadBtn: $('downloadBtn'),
+            reviewBtn: $('reviewBtn'),
+            toast: $('toast'),
+            jumpInput: $('jumpInput'),
+            jumpBtn: $('jumpBtn'),
+            instructionsBtn: $('instructionsBtn'),
+            instructionsPanel: $('instructionsPanel'),
+            instructionsClose: $('instructionsClose')
+        };
+
+        // ===== STATEMENT MAPPING =====
+        const STATEMENT_MAP = {
+            'gov_power': 'The federal government has too much power.',
+            'gov_regulation': 'Government regulation of business usually does more harm than good.',
+            'gov_waste': 'Government is always wasteful and inefficient.',
+            'compromise': 'Elected officials should stick to their positions rather than make compromises.',
+            'wealth_tax': "Wealthy people don't pay their fair share in taxes.",
+            'environ_law': 'Our country should have fewer environmental laws and regulations.',
+            'climate_change': 'Global climate change is a major threat to the world.',
+            'gov_resp': 'The government has a responsibility to help all of its citizens who are in need.',
+            'gov_needy': 'The government should do more to help the needy.',
+            'white_priv': 'White people have advantages in society that Black people do not have.',
+            'government_crime': 'The government should pass stricter laws to fight crime.',
+            'police': 'The police do a good job of making everyone feel safer.',
+            'immigrants': 'The government should allow fewer immigrants into the country.',
+            'immigrant_strength': 'Immigrants strengthen the country with their hard work and talents.',
+            'foreign_trade': 'Foreign trade is an opportunity for economic growth.',
+            'military_peace': 'The best way to ensure peace is through military strength.',
+            'military_priority': "The military should be a top priority for the country's leaders.",
+            'gun_laws': 'Gun laws should be stricter.',
+            'gun_database': 'There should be a national database to track gun sales.',
+            'public_ed': 'K-12 education in this country is satisfactory.',
+            'school_impact': 'K-12 schools are having a positive effect on the country.',
+            'transgender': "Children should learn that someone can be a boy or a girl even if that's different from sex at birth.",
+            'abortion': 'The government should allow abortion.',
+            'unrestrict_abortion': 'Abortion should be legal under any circumstance.',
+            'health_abortion': 'Abortion should be legal when the baby is likely to be born with severe disabilities or health problems.',
+            'misinformation': 'The government should do more to fight the spread of misinformation on social media.',
+            'social_media': 'Information about national events from social media can be trusted.',
+            'homosexuality': 'Homosexuality should be discouraged by society.',
+            'marijuana': 'Marijuana use should be legal.',
+            'msm': 'Mainstream media organizations can be trusted.'
+        };
+
+        function getStatementText(code) {
+            return STATEMENT_MAP[code] || code;
+        }
+
+        // ===== CSV PARSING =====
+        function parseCSV(text) {
+            const lines = text.split(/\r?\n/);
+            if (lines.length < 2) throw new Error('CSV must have header and data rows');
+
+            // Parse header
+            const header = parseCSVLine(lines[0]);
+            const responseIdIdx = header.findIndex(h => h.toLowerCase() === 'responseid');
+            const xIdx = header.findIndex(h => h.toLowerCase() === 'x');
+            const statementIdx = header.findIndex(h => h.toLowerCase() === 'statement');
+            const agreeIdx = header.findIndex(h => h.toLowerCase() === 'agree');
+            const describeIdx = header.findIndex(h => h.toLowerCase() === 'x_describe');
+
+            if (responseIdIdx === -1) throw new Error('CSV must have "ResponseId" column');
+            if (xIdx === -1) throw new Error('CSV must have "X" column');
+            if (statementIdx === -1) throw new Error('CSV must have "statement" column');
+            if (describeIdx === -1) throw new Error('CSV must have "X_describe" column');
+
+            // Parse data rows
+            const data = [];
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                const values = parseCSVLine(lines[i]);
+                if (values.length < Math.max(responseIdIdx, xIdx, statementIdx, describeIdx) + 1) continue;
+                
+                data.push({
+                    ResponseId: values[responseIdIdx] || '',
+                    X: values[xIdx] || '',
+                    statement: values[statementIdx] || '',
+                    agree: agreeIdx !== -1 ? (values[agreeIdx] || '') : '',
+                    X_describe: values[describeIdx] || ''
+                });
+            }
+
+            return data;
+        }
+
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    if (inQuotes && line[i + 1] === '"') {
+                        current += '"';
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current.trim());
+            return result;
+        }
+
+        // ===== API FUNCTIONS =====
+        async function apiLoadTemplate() {
+            try {
+                const response = await fetch(`${API_BASE}/api/template`);
+                if (response.ok) {
+                    return await response.json();
+                }
+            } catch (e) {
+                console.log('Server not available, falling back to local mode');
+            }
+            return null;
+        }
+
+        async function apiLoadUserAnnotations(username) {
+            try {
+                const response = await fetch(`${API_BASE}/api/annotations?username=${encodeURIComponent(username)}`);
+                if (response.ok) {
+                    return await response.json();
+                }
+            } catch (e) {
+                console.log('Could not load user annotations');
+            }
+            return null;
+        }
+
+        async function apiInitUser(username) {
+            try {
+                const response = await fetch(`${API_BASE}/api/init-user`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username })
+                });
+                if (response.ok) {
+                    return await response.json();
+                }
+            } catch (e) {
+                console.log('Could not initialize user file');
+            }
+            return null;
+        }
+
+        async function apiSaveAnnotations() {
+            if (!state.serverMode) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/save`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: state.annotatorId,
+                        data: state.data,
+                        annotations: state.annotations
+                    })
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    return result;
+                }
+            } catch (e) {
+                console.log('Could not save to server');
+            }
+            return null;
+        }
+
+        async function apiCheckUser(username) {
+            try {
+                const response = await fetch(`${API_BASE}/api/check-user?username=${encodeURIComponent(username)}`);
+                if (response.ok) {
+                    return await response.json();
+                }
+            } catch (e) {
+                console.log('Could not check user');
+            }
+            return null;
+        }
+
+        // ===== STORAGE =====
+        async function saveState() {
+            // Save to localStorage as backup
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            
+            // Also save to server if available
+            if (state.serverMode) {
+                const result = await apiSaveAnnotations();
+                if (result && result.success) {
+                    showToast(`Saved to annotations_${state.annotatorId}.csv`);
+                } else {
+                    showToast('Progress saved locally');
+                }
+            } else {
+                showToast('Progress saved locally');
+            }
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                return JSON.parse(saved);
+            }
+            return null;
+        }
+
+        function clearState() {
+            localStorage.removeItem(STORAGE_KEY);
+        }
+
+        // Get unique key for each row (using X since it's unique per row)
+        function getRowKey(item) {
+            return item.X;
+        }
+
+        // ===== UI FUNCTIONS =====
+        function showToast(message) {
+            elements.toast.textContent = message;
+            elements.toast.classList.add('show');
+            setTimeout(() => elements.toast.classList.remove('show'), 2000);
+        }
+
+        function updateProgress() {
+            const completed = Object.keys(state.annotations).length;
+            const total = state.data.length;
+            const percent = total > 0 ? (completed / total) * 100 : 0;
+            
+            elements.progressBar.style.width = `${percent}%`;
+            elements.progressText.textContent = `${completed} / ${total}`;
+        }
+
+        function showScreen(screen) {
+            elements.setupScreen.style.display = 'none';
+            elements.annotationScreen.style.display = 'none';
+            elements.completeScreen.style.display = 'none';
+
+            if (screen === 'setup') {
+                elements.setupScreen.style.display = 'block';
+                elements.progressContainer.style.display = 'none';
+                elements.annotatorBadge.style.display = 'none';
+            } else if (screen === 'annotation') {
+                elements.annotationScreen.style.display = 'block';
+                elements.progressContainer.style.display = 'flex';
+                elements.annotatorBadge.style.display = 'block';
+            } else if (screen === 'complete') {
+                elements.completeScreen.style.display = 'block';
+                elements.progressContainer.style.display = 'flex';
+                elements.annotatorBadge.style.display = 'block';
+            }
+        }
+
+        function loadItem(index) {
+            if (index < 0 || index >= state.data.length) return;
+
+            state.currentIndex = index;
+            const item = state.data[index];
+            const rowKey = getRowKey(item);
+
+            // Update display
+            elements.textContent.textContent = item.X_describe;
+            elements.currentIndex.textContent = index + 1;
+            
+            // Update context display
+            const statementFullText = getStatementText(item.statement);
+            elements.statementText.textContent = `"${statementFullText}"`;
+            
+            // Style the agree badge based on opinion
+            const agree = (item.agree || '').toLowerCase();
+            elements.agreeText.textContent = item.agree || 'Unknown';
+            if (agree === 'agree') {
+                elements.agreeText.style.background = '#d4edda';
+                elements.agreeText.style.color = '#155724';
+            } else if (agree === 'disagree') {
+                elements.agreeText.style.background = '#f8d7da';
+                elements.agreeText.style.color = '#721c24';
+            } else {
+                elements.agreeText.style.background = '#fff3cd';
+                elements.agreeText.style.color = '#856404';
+            }
+            elements.totalItems.textContent = state.data.length;
+            elements.jumpInput.max = state.data.length;
+            elements.jumpInput.value = '';
+
+            // Clear all selections
+            document.querySelectorAll('.option-btn, .likert-btn, .yesno-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            document.querySelectorAll('input[type="radio"]').forEach(input => {
+                input.checked = false;
+            });
+            document.querySelectorAll('.question').forEach(q => q.classList.remove('error'));
+
+            // Load existing annotations if any
+            const existing = state.annotations[rowKey];
+            if (existing) {
+                Object.entries(existing).forEach(([field, value]) => {
+                    if (!value) return;
+                    
+                    // Radio buttons
+                    const radio = document.querySelector(`input[name="${field}"][value="${value}"]`);
+                    if (radio) {
+                        radio.checked = true;
+                        radio.closest('.option-btn')?.classList.add('selected');
+                    }
+
+                    // Likert buttons
+                    const likertContainer = document.querySelector(`[data-field="${field}"] .likert-scale`);
+                    if (likertContainer) {
+                        const btn = likertContainer.querySelector(`[data-value="${value}"]`);
+                        if (btn) btn.classList.add('selected');
+                    }
+
+                    // Yes/No buttons
+                    const yesnoContainer = document.querySelector(`[data-field="${field}"] .yesno-container`);
+                    if (yesnoContainer) {
+                        const btn = yesnoContainer.querySelector(`[data-value="${value}"]`);
+                        if (btn) btn.classList.add('selected');
+                    }
+                });
+            }
+
+            // Update nav buttons
+            elements.prevBtn.disabled = index === 0;
+            elements.nextBtn.textContent = index === state.data.length - 1 ? 'Finish ✓' : 'Save & Next →';
+
+            // Scroll to top immediately
+            window.scrollTo(0, 0);
+        }
+
+        function collectCurrentAnnotations() {
+            const fields = [
+                'emotion_categorical',
+                'emotion_anger_likert',
+                'emotion_joy_likert',
+                'emotion_sadness_likert',
+                'emotion_optimism_likert',
+                'sentiment_categorical',
+                'sentiment_likert',
+                'mf_care',
+                'mf_proportionality',
+                'mf_equality',
+                'mf_loyalty',
+                'mf_authority',
+                'mf_purity',
+                'political_guess'
+            ];
+
+            const annotations = {};
+            
+            fields.forEach(field => {
+                // Check radio buttons
+                const radio = document.querySelector(`input[name="${field}"]:checked`);
+                if (radio) {
+                    annotations[field] = radio.value;
+                    return;
+                }
+
+                // Check likert/yesno buttons
+                const container = document.querySelector(`[data-field="${field}"]`);
+                if (container) {
+                    const selected = container.querySelector('.likert-btn.selected, .yesno-btn.selected');
+                    if (selected) {
+                        annotations[field] = selected.dataset.value;
+                    }
+                }
+            });
+
+            return annotations;
+        }
+
+        function validateAnnotations(annotations) {
+            const required = [
+                'emotion_categorical',
+                'emotion_anger_likert',
+                'emotion_joy_likert',
+                'emotion_sadness_likert',
+                'emotion_optimism_likert',
+                'sentiment_categorical',
+                'sentiment_likert',
+                'mf_care',
+                'mf_proportionality',
+                'mf_equality',
+                'mf_loyalty',
+                'mf_authority',
+                'mf_purity',
+                'political_guess'
+            ];
+
+            let valid = true;
+            document.querySelectorAll('.question').forEach(q => q.classList.remove('error'));
+
+            required.forEach(field => {
+                if (!annotations[field]) {
+                    const container = document.querySelector(`[data-field="${field}"]`);
+                    if (container) {
+                        container.classList.add('error');
+                        valid = false;
+                    }
+                }
+            });
+
+            if (!valid) {
+                showToast('Please complete all questions');
+                // Scroll to first error
+                const firstError = document.querySelector('.question.error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+
+            return valid;
+        }
+
+        async function saveCurrentAndNext() {
+            const annotations = collectCurrentAnnotations();
+            
+            if (!validateAnnotations(annotations)) return;
+
+            const item = state.data[state.currentIndex];
+            const rowKey = getRowKey(item);
+            state.annotations[rowKey] = annotations;
+            await saveState();
+            updateProgress();
+
+            if (state.currentIndex < state.data.length - 1) {
+                loadItem(state.currentIndex + 1);
+            } else {
+                // Check if all are complete
+                if (Object.keys(state.annotations).length === state.data.length) {
+                    state.isComplete = true;
+                    await saveState();
+                    showScreen('complete');
+                } else {
+                    showToast('Some items still need annotation');
+                    // Find first incomplete
+                    for (let i = 0; i < state.data.length; i++) {
+                        const key = getRowKey(state.data[i]);
+                        if (!state.annotations[key]) {
+                            loadItem(i);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        function generateCSV() {
+            const headers = [
+                'ResponseId',
+                'X',
+                'statement',
+                'X_describe',
+                'annotator_id',
+                'emotion_categorical',
+                'emotion_anger_likert',
+                'emotion_joy_likert',
+                'emotion_sadness_likert',
+                'emotion_optimism_likert',
+                'sentiment_categorical',
+                'sentiment_likert',
+                'mf_care',
+                'mf_proportionality',
+                'mf_equality',
+                'mf_loyalty',
+                'mf_authority',
+                'mf_purity',
+                'political_guess'
+            ];
+
+            const rows = state.data.map(item => {
+                const rowKey = getRowKey(item);
+                const ann = state.annotations[rowKey] || {};
+                return [
+                    escapeCSV(item.ResponseId),
+                    escapeCSV(item.X),
+                    escapeCSV(item.statement),
+                    escapeCSV(item.X_describe),
+                    escapeCSV(state.annotatorId),
+                    ann.emotion_categorical || '',
+                    ann.emotion_anger_likert || '',
+                    ann.emotion_joy_likert || '',
+                    ann.emotion_sadness_likert || '',
+                    ann.emotion_optimism_likert || '',
+                    ann.sentiment_categorical || '',
+                    ann.sentiment_likert || '',
+                    ann.mf_care || '',
+                    ann.mf_proportionality || '',
+                    ann.mf_equality || '',
+                    ann.mf_loyalty || '',
+                    ann.mf_authority || '',
+                    ann.mf_purity || '',
+                    ann.political_guess || ''
+                ].join(',');
+            });
+
+            return [headers.join(','), ...rows].join('\n');
+        }
+
+        function escapeCSV(value) {
+            if (value === null || value === undefined) return '';
+            const str = String(value);
+            if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
+                return `"${str.replace(/"/g, '""')}"`;
+            }
+            return str;
+        }
+
+        function downloadCSV() {
+            const csv = generateCSV();
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `annotations_${state.annotatorId}_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        // ===== EVENT LISTENERS =====
+        function initEventListeners() {
+            // Username input - update filename preview
+            elements.annotatorId.addEventListener('input', () => {
+                const username = elements.annotatorId.value.trim();
+                if (username) {
+                    elements.filenamePreview.textContent = `annotations_${username}.csv`;
+                } else {
+                    elements.filenamePreview.textContent = 'annotations_[username].csv';
+                }
+                checkStartReady();
+                
+                // Check if user already has a file
+                if (username) {
+                    checkExistingUser(username);
+                }
+            });
+
+            elements.startBtn.addEventListener('click', startAnnotation);
+            elements.resumeBtn.addEventListener('click', resumeSession);
+
+            // Instructions panel toggle
+            elements.instructionsBtn.addEventListener('click', () => {
+                elements.instructionsPanel.classList.add('show');
+            });
+
+            elements.instructionsClose.addEventListener('click', () => {
+                elements.instructionsPanel.classList.remove('show');
+            });
+
+            elements.instructionsPanel.addEventListener('click', (e) => {
+                if (e.target === elements.instructionsPanel) {
+                    elements.instructionsPanel.classList.remove('show');
+                }
+            });
+
+            // Close instructions with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && elements.instructionsPanel.classList.contains('show')) {
+                    elements.instructionsPanel.classList.remove('show');
+                }
+            });
+
+            // Navigation
+            elements.prevBtn.addEventListener('click', async () => {
+                if (state.currentIndex > 0) {
+                    // Save current before moving (partial save OK)
+                    const annotations = collectCurrentAnnotations();
+                    if (Object.keys(annotations).length > 0) {
+                        const item = state.data[state.currentIndex];
+                        const rowKey = getRowKey(item);
+                        state.annotations[rowKey] = annotations;
+                        await saveState();
+                        updateProgress();
+                    }
+                    loadItem(state.currentIndex - 1);
+                }
+            });
+
+            elements.nextBtn.addEventListener('click', saveCurrentAndNext);
+
+            elements.downloadBtn.addEventListener('click', downloadCSV);
+            
+            elements.reviewBtn.addEventListener('click', () => {
+                showScreen('annotation');
+                loadItem(0);
+            });
+
+            // Jump to specific item
+            elements.jumpBtn.addEventListener('click', async () => {
+                const target = parseInt(elements.jumpInput.value);
+                if (target >= 1 && target <= state.data.length) {
+                    // Save current first
+                    const annotations = collectCurrentAnnotations();
+                    if (Object.keys(annotations).length > 0) {
+                        const item = state.data[state.currentIndex];
+                        const rowKey = getRowKey(item);
+                        state.annotations[rowKey] = annotations;
+                        await saveState();
+                        updateProgress();
+                    }
+                    loadItem(target - 1);
+                }
+            });
+
+            elements.jumpInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    elements.jumpBtn.click();
+                }
+            });
+
+            // Option buttons (radio style)
+            document.querySelectorAll('.options-grid .option-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const group = btn.closest('.options-grid');
+                    group.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    btn.querySelector('input').checked = true;
+                    btn.closest('.question')?.classList.remove('error');
+                });
+            });
+
+            // Likert buttons
+            document.querySelectorAll('.likert-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const scale = btn.closest('.likert-scale');
+                    scale.querySelectorAll('.likert-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    btn.closest('.question')?.classList.remove('error');
+                });
+            });
+
+            // Yes/No buttons
+            document.querySelectorAll('.yesno-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const container = btn.closest('.yesno-container');
+                    container.querySelectorAll('.yesno-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    btn.closest('.question')?.classList.remove('error');
+                });
+            });
+
+        }
+
+        async function checkExistingUser(username) {
+            const result = await apiCheckUser(username);
+            let hasExistingSession = false;
+            let completedCount = 0;
+            let totalCount = state.data.length;
+
+            if (result && result.exists) {
+                hasExistingSession = true;
+                // Try to get completion count from server
+                const serverData = await apiLoadUserAnnotations(username);
+                if (serverData && serverData.annotations) {
+                    completedCount = Object.keys(serverData.annotations).length;
+                }
+            } else {
+                // Check localStorage too
+                const saved = loadState();
+                if (saved && saved.annotatorId === username && saved.data.length > 0) {
+                    hasExistingSession = true;
+                    completedCount = Object.keys(saved.annotations).length;
+                    totalCount = saved.data.length;
+                }
+            }
+
+            if (hasExistingSession) {
+                // Show resume button as primary (green), start as secondary (beige)
+                elements.resumeBtn.style.display = 'block';
+                elements.resumeBtn.textContent = `Resume Session (${completedCount}/${totalCount} completed)`;
+                elements.resumeBtn.className = 'btn btn-primary btn-large';
+                elements.startBtn.className = 'btn btn-secondary';
+                elements.startBtn.textContent = 'Start Fresh (overwrites progress)';
+            } else {
+                // Hide resume, show start as primary
+                elements.resumeBtn.style.display = 'none';
+                elements.startBtn.className = 'btn btn-primary';
+                elements.startBtn.textContent = 'Start Annotating';
+            }
+        }
+
+        function checkStartReady() {
+            const hasAnnotator = elements.annotatorId.value.trim().length > 0;
+            const hasData = state.data.length > 0;
+            elements.startBtn.disabled = !(hasAnnotator && hasData);
+        }
+
+        async function startAnnotation() {
+            state.annotatorId = elements.annotatorId.value.trim();
+            state.annotations = {};
+            state.currentIndex = 0;
+            state.isComplete = false;
+
+            // Initialize user file on server
+            if (state.serverMode) {
+                const result = await apiInitUser(state.annotatorId);
+                if (result && result.created) {
+                    showToast(`Created annotations_${state.annotatorId}.csv`);
+                }
+            }
+
+            elements.annotatorDisplay.textContent = state.annotatorId;
+            await saveState();
+            updateProgress();
+            showScreen('annotation');
+            loadItem(0);
+        }
+
+        async function resumeSession() {
+            const username = elements.annotatorId.value.trim();
+            
+            // First try to load from server
+            if (state.serverMode && username) {
+                const serverData = await apiLoadUserAnnotations(username);
+                if (serverData && serverData.exists) {
+                    // Load template data
+                    const templateResult = await apiLoadTemplate();
+                    if (templateResult && templateResult.data) {
+                        state.data = templateResult.data;
+                        state.annotations = serverData.annotations || {};
+                        state.annotatorId = username;
+                        state.currentIndex = findFirstIncomplete();
+                        state.isComplete = Object.keys(state.annotations).length === state.data.length;
+                        
+                        elements.annotatorDisplay.textContent = state.annotatorId;
+                        updateProgress();
+                        
+                        if (state.isComplete) {
+                            showScreen('complete');
+                        } else {
+                            showScreen('annotation');
+                            loadItem(state.currentIndex);
+                        }
+                        return;
+                    }
+                }
+            }
+            
+            // Fallback to localStorage
+            const saved = loadState();
+            if (saved) {
+                state = saved;
+                elements.annotatorDisplay.textContent = state.annotatorId;
+                updateProgress();
+                
+                if (state.isComplete) {
+                    showScreen('complete');
+                } else {
+                    showScreen('annotation');
+                    loadItem(state.currentIndex);
+                }
+            }
+        }
+
+        function findFirstIncomplete() {
+            for (let i = 0; i < state.data.length; i++) {
+                const key = getRowKey(state.data[i]);
+                if (!state.annotations[key]) {
+                    return i;
+                }
+            }
+            return 0;
+        }
+
+        // ===== INIT =====
+        async function init() {
+            initEventListeners();
+
+            // Try to load data from server
+            elements.loadingStatus.textContent = 'Loading data from server...';
+            
+            try {
+                const result = await apiLoadTemplate();
+                if (result && result.data && result.data.length > 0) {
+                    state.data = result.data;
+                    state.serverMode = true;
+                    elements.loadingStatus.innerHTML = `✓ <strong>${result.count} items</strong> loaded from annotations_empty.csv`;
+                    elements.dataStatus.style.background = 'var(--accent-light)';
+                    checkStartReady();
+                } else {
+                    state.serverMode = false;
+                    elements.loadingStatus.innerHTML = `
+                        <span style="color: #c45a5a;">⚠️ Server not running</span><br>
+                        <small>Start the server with: <code>python server.py</code></small>
+                    `;
+                }
+            } catch (e) {
+                state.serverMode = false;
+                elements.loadingStatus.innerHTML = `
+                    <span style="color: #c45a5a;">⚠️ Could not connect to server</span><br>
+                    <small>Start the server with: <code>python server.py</code></small>
+                `;
+            }
+
+            // Check for existing session in localStorage
+            const saved = loadState();
+            if (saved && saved.data && saved.data.length > 0) {
+                elements.annotatorId.value = saved.annotatorId || '';
+                if (saved.annotatorId) {
+                    elements.filenamePreview.textContent = `annotations_${saved.annotatorId}.csv`;
+                    // Trigger the existing user check to set up buttons properly
+                    checkExistingUser(saved.annotatorId);
+                    checkStartReady();
+                }
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
