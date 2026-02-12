@@ -180,6 +180,7 @@ class AnnotationHandler(http.server.SimpleHTTPRequestHandler):
                     if rowid_value:
                         ann = {}
                         annotation_fields = [
+                            'skip_reason',
                             'emotion_openended',
                             'emotion_categorical', 'emotion_anger_likert', 'emotion_joy_likert',
                             'emotion_sadness_likert', 'emotion_optimism_likert',
@@ -207,6 +208,7 @@ class AnnotationHandler(http.server.SimpleHTTPRequestHandler):
         # Define annotation columns
         annotation_columns = [
             'annotator_id',
+            'skip_reason',
             'emotion_openended',
             'emotion_categorical',
             'emotion_anger_likert',
@@ -260,6 +262,7 @@ class AnnotationHandler(http.server.SimpleHTTPRequestHandler):
         base_columns = ['rowid', 'ResponseId', 'statement', 'agree', 'X_describe']
         annotation_columns = [
             'annotator_id',
+            'skip_reason',
             'emotion_openended',
             'emotion_categorical',
             'emotion_anger_likert',

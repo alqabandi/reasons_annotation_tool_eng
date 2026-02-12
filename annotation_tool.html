@@ -469,6 +469,125 @@
             font-style: italic;
         }
 
+        /* Skip banner */
+        .skip-banner {
+            background: var(--bg-secondary);
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .skip-banner-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .skip-banner-title {
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .skip-banner-hint {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .skip-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .skip-reason-select {
+            padding: 0.5rem 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-family: inherit;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .skip-reason-select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .btn-skip {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            border: 2px solid #c4943d;
+            background: #fff8eb;
+            color: #8a6b20;
+            transition: all 0.2s;
+        }
+
+        .btn-skip:hover {
+            background: #c4943d;
+            color: white;
+        }
+
+        /* Skipped state */
+        .skip-active-banner {
+            background: #fff3cd;
+            border: 2px solid #c4943d;
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .skip-active-banner.show {
+            display: flex;
+        }
+
+        .skip-active-text {
+            font-weight: 500;
+            color: #8a6b20;
+        }
+
+        .btn-unskip {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            border: 2px solid var(--accent-primary);
+            background: var(--accent-light);
+            color: var(--accent-primary);
+            transition: all 0.2s;
+        }
+
+        .btn-unskip:hover {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .annotation-questions.hidden-by-skip {
+            opacity: 0.25;
+            pointer-events: none;
+            filter: grayscale(0.5);
+            transition: all 0.3s;
+        }
+
         /* Open-ended text input */
         .open-ended-input {
             width: 100%;
@@ -1026,6 +1145,32 @@
                 <div class="text-content" id="textContent"></div>
             </div>
 
+            <!-- Skip Banner -->
+            <div class="skip-banner" id="skipBanner">
+                <div class="skip-banner-left">
+                    <div class="skip-banner-title">Can't annotate this text?</div>
+                    <div class="skip-banner-hint">Use this if the response is gibberish, blank, in a different language, etc.</div>
+                </div>
+                <div class="skip-controls">
+                    <select class="skip-reason-select" id="skipReason">
+                        <option value="">Reason…</option>
+                        <option value="gibberish">Gibberish</option>
+                        <option value="blank">Blank / empty</option>
+                        <option value="other_language">Different language</option>
+                        <option value="unclear">Unclear / uninterpretable</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <button class="btn-skip" id="skipBtn">Skip & Next →</button>
+                </div>
+            </div>
+
+            <!-- Skipped state banner (shown when navigating back to a skipped item) -->
+            <div class="skip-active-banner" id="skipActiveBanner">
+                <div class="skip-active-text">⚠ This item was skipped — <span id="skipActiveReason"></span></div>
+                <button class="btn-unskip" id="unskipBtn">Undo skip & annotate</button>
+            </div>
+
+            <div class="annotation-questions" id="annotationQuestions">
             <!-- Emotions Section -->
             <div class="question-section fade-in" style="animation-delay: 0.1s;">
                 <div class="section-header">
@@ -1370,6 +1515,8 @@
                 </div>
             </div>
 
+            </div><!-- /annotation-questions -->
+
             <!-- Navigation -->
             <div class="nav-container">
                 <div class="nav-info">
@@ -1469,7 +1616,14 @@
             sessionsList: $('sessionsList'),
             confirmOverlay: $('confirmOverlay'),
             confirmCancel: $('confirmCancel'),
-            confirmProceed: $('confirmProceed')
+            confirmProceed: $('confirmProceed'),
+            skipBanner: $('skipBanner'),
+            skipReason: $('skipReason'),
+            skipBtn: $('skipBtn'),
+            skipActiveBanner: $('skipActiveBanner'),
+            skipActiveReason: $('skipActiveReason'),
+            unskipBtn: $('unskipBtn'),
+            annotationQuestions: $('annotationQuestions')
         };
 
         // ===== STATEMENT MAPPING =====
@@ -1815,6 +1969,20 @@
             elements.prevBtn.disabled = index === 0;
             elements.nextBtn.textContent = index === state.data.length - 1 ? 'Finish ✓' : 'Save & Next →';
 
+            // Handle skip state
+            const isSkipped = existing && existing._skipped;
+            if (isSkipped) {
+                elements.skipBanner.style.display = 'none';
+                elements.skipActiveBanner.classList.add('show');
+                elements.skipActiveReason.textContent = existing.skip_reason || 'no reason given';
+                elements.annotationQuestions.classList.add('hidden-by-skip');
+            } else {
+                elements.skipBanner.style.display = 'flex';
+                elements.skipActiveBanner.classList.remove('show');
+                elements.annotationQuestions.classList.remove('hidden-by-skip');
+                elements.skipReason.value = '';
+            }
+
             // Scroll to top immediately
             window.scrollTo(0, 0);
         }
@@ -1960,6 +2128,64 @@
             }
         }
 
+        async function skipCurrentAndNext() {
+            const reason = elements.skipReason.value;
+            if (!reason) {
+                showToast('Please select a reason for skipping');
+                elements.skipReason.focus();
+                return;
+            }
+
+            // Build an annotation object with NA for every field
+            const naFields = [
+                'emotion_openended', 'emotion_categorical',
+                'emotion_anger_likert', 'emotion_joy_likert',
+                'emotion_sadness_likert', 'emotion_optimism_likert',
+                'emotion_frustration_likert',
+                'sentiment_categorical', 'sentiment_likert',
+                'mf_care', 'mf_fairness', 'mf_loyalty',
+                'mf_authority', 'mf_purity', 'mf_liberty',
+                'mf_honesty', 'mf_selfdiscipline',
+                'mf_identity', 'mf_politics_frame',
+                'mf_orientation', 'mf_cooperative_domain',
+                'political_guess'
+            ];
+            const annotations = { _skipped: true, skip_reason: reason };
+            naFields.forEach(f => annotations[f] = 'NA');
+
+            const item = state.data[state.currentIndex];
+            const rowKey = getRowKey(item);
+            state.annotations[rowKey] = annotations;
+            await saveState();
+            updateProgress();
+
+            if (state.currentIndex < state.data.length - 1) {
+                loadItem(state.currentIndex + 1);
+            } else {
+                if (Object.keys(state.annotations).length === state.data.length) {
+                    state.isComplete = true;
+                    await saveState();
+                    showScreen('complete');
+                } else {
+                    for (let i = 0; i < state.data.length; i++) {
+                        const key = getRowKey(state.data[i]);
+                        if (!state.annotations[key]) {
+                            loadItem(i);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        function unskipCurrent() {
+            const item = state.data[state.currentIndex];
+            const rowKey = getRowKey(item);
+            delete state.annotations[rowKey];
+            updateProgress();
+            loadItem(state.currentIndex);
+        }
+
         function generateCSV() {
             const headers = [
                 'rowid',
@@ -1967,6 +2193,7 @@
                 'statement',
                 'X_describe',
                 'annotator_id',
+                'skip_reason',
                 'emotion_openended',
                 'emotion_categorical',
                 'emotion_anger_likert',
@@ -2000,6 +2227,7 @@
                     escapeCSV(item.statement),
                     escapeCSV(item.X_describe),
                     escapeCSV(state.annotatorId),
+                    escapeCSV(ann.skip_reason || ''),
                     escapeCSV(ann.emotion_openended || ''),
                     ann.emotion_categorical || '',
                     ann.emotion_anger_likert || '',
@@ -2148,6 +2376,10 @@
                 }
             });
 
+            // Skip controls
+            elements.skipBtn.addEventListener('click', skipCurrentAndNext);
+            elements.unskipBtn.addEventListener('click', unskipCurrent);
+
             // Open-ended text inputs - clear error on typing
             document.querySelectorAll('.open-ended-input').forEach(input => {
                 input.addEventListener('input', () => {
@@ -2288,6 +2520,10 @@
                     if (templateResult && templateResult.data) {
                         state.data = templateResult.data;
                         state.annotations = serverData.annotations || {};
+                        // Reconstruct _skipped flag for rows that have a skip_reason
+                        Object.values(state.annotations).forEach(ann => {
+                            if (ann.skip_reason) ann._skipped = true;
+                        });
                         state.annotatorId = username;
                         state.currentIndex = findFirstIncomplete();
                         state.isComplete = Object.keys(state.annotations).length === state.data.length;
