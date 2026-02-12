@@ -35,8 +35,8 @@ Drop a CSV file named `annotations_empty.csv` into the project root. It needs th
 
 | Column | What it contains |
 |---|---|
+| `rowid` | A unique row ID (used as the annotation key and for merging back to the main dataframe) |
 | `ResponseId` | A unique participant ID |
-| `X` | A unique row ID (the tool uses this as its annotation key) |
 | `statement` | A code for the political statement (e.g., `climate_change`, `gun_laws`) |
 | `agree` | Whether the participant agreed or disagreed |
 | `X_describe` | The participant's free-text response -- this is what annotators read and label |
@@ -75,6 +75,7 @@ Here are the API endpoints it exposes:
 | `GET` | `/api/template` | Sends all rows from the template CSV |
 | `GET` | `/api/annotations?username=X` | Fetches a user's saved annotations |
 | `GET` | `/api/check-user?username=X` | Checks whether a user file already exists |
+| `GET` | `/api/list-users` | Lists all existing annotator files with progress counts |
 | `POST` | `/api/init-user` | Creates a fresh `annotations_[username].csv` from the template |
 | `POST` | `/api/save` | Writes the current annotations to the user's CSV |
 

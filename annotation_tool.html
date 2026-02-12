@@ -469,6 +469,28 @@
             font-style: italic;
         }
 
+        /* Open-ended text input */
+        .open-ended-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: var(--bg-secondary);
+        }
+
+        .open-ended-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px var(--accent-light);
+        }
+
+        .question.error .open-ended-input {
+            border-color: #e8b4b4;
+        }
+
         /* Radio Options */
         .options-grid {
             display: flex;
@@ -762,6 +784,107 @@
             font-weight: 600;
             margin-left: 0.5rem;
         }
+
+        /* Existing sessions */
+        .existing-sessions {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .existing-sessions-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .session-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.875rem 1rem;
+            background: var(--accent-light);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 0.5rem;
+        }
+
+        .session-card:hover {
+            border-color: var(--accent-secondary);
+            background: white;
+        }
+
+        .session-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .session-username {
+            font-weight: 600;
+            color: var(--accent-primary);
+            font-size: 0.95rem;
+        }
+
+        .session-progress {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .session-resume-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--accent-secondary);
+        }
+
+        /* Confirmation overlay */
+        .confirm-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 300;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .confirm-overlay.show {
+            display: flex;
+        }
+
+        .confirm-box {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 440px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        .confirm-box h3 {
+            color: #c45a5a;
+            margin-bottom: 0.75rem;
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 1.3rem;
+        }
+
+        .confirm-box p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .confirm-buttons {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
@@ -828,6 +951,24 @@
                         <li><strong>Honesty:</strong> Being truthful, sincere, and open</li>
                         <li><strong>Self-discipline:</strong> Persistence, self-control, and resisting temptation</li>
             </ul>
+            <p style="margin-top: 1rem;">You'll also answer four additional moral-framework questions:</p>
+            <ul>
+                <li><strong>Moral Identity:</strong> Does the text reflect <em>internalization</em> (morality as central to who you are) or <em>symbolization</em> (morality expressed outwardly through actions and choices)?</li>
+                <li><strong>Moral-Political Frame:</strong> Does the text lean toward a <em>nurturant parent</em> worldview (empathy, care, fairness, protecting the vulnerable) or a <em>strict father</em> worldview (discipline, obedience, moral strength, self-reliance)?</li>
+                <li><strong>Moral Foundation Orientation:</strong> Does the text emphasize <em>individualizing</em> values (individual rights, care, justice) or <em>binding</em> values (group cohesion, loyalty, authority, purity)?</li>
+                <li><strong>Cooperative Moral Domain:</strong> Which domain best fits the text? Options: Family, Group, Reciprocity, Deference, Heroism, Fairness, or Property.</li>
+            </ul>
+
+            <h5 style="color: var(--text-primary); margin-top: 1rem;">Cooperative Moral Domain definitions</h5>
+            <ul>
+                <li><strong>Family:</strong> Care and resources for kin; solidarity with family members</li>
+                <li><strong>Group:</strong> Cooperation, coalition-building, conformity to shared norms</li>
+                <li><strong>Reciprocity:</strong> Conditional cooperation, trustworthiness, fairness in exchange</li>
+                <li><strong>Deference:</strong> Humility, obedience, respect for authority</li>
+                <li><strong>Heroism:</strong> Bravery, fortitude, asserting strength in competitive contexts</li>
+                <li><strong>Fairness:</strong> Compromise, equity, proportional sharing of contested resources</li>
+                <li><strong>Property:</strong> Respecting ownership, non-interference, stability of possession</li>
+            </ul>
             
             <h4 style="color: var(--text-primary); margin-top: 1rem;">🗳️ Political Inference</h4>
             <p>Based solely on the text, which political party do you think the writer most likely identifies with? Select "Can't tell" if there's insufficient information.</p>
@@ -860,6 +1001,11 @@
                     <span id="loadingStatus">Loading data...</span>
                 </div>
 
+                <div id="existingSessions" class="existing-sessions" style="display: none;">
+                    <div class="existing-sessions-label">Existing sessions found on this computer</div>
+                    <div id="sessionsList"></div>
+                </div>
+
                 <div id="buttonContainer">
                     <button class="btn btn-primary btn-large" id="resumeBtn" style="display: none; width: 100%; margin-bottom: 0.75rem;">Resume Previous Session</button>
                     <button class="btn btn-primary" id="startBtn" disabled style="width: 100%;">Start Annotating</button>
@@ -887,6 +1033,12 @@
                     <h2 class="section-title">Emotions</h2>
                 </div>
 
+                <div class="question" data-field="emotion_openended">
+                    <div class="question-text">In one word, what emotion best describes the state of the writer?</div>
+                    <input type="text" class="open-ended-input" id="emotion_openended_input" placeholder="e.g., frustrated, hopeful, angry…" autocomplete="off">
+                    <div class="validation-error">Please enter a word</div>
+                </div>
+
                 <div class="question" data-field="emotion_categorical">
                     <div class="question-text">Which emotion best represents the mental state of the writer?</div>
                     <div class="options-grid">
@@ -894,6 +1046,8 @@
                         <label class="option-btn"><input type="radio" name="emotion_categorical" value="2">Joy</label>
                         <label class="option-btn"><input type="radio" name="emotion_categorical" value="3">Sadness</label>
                         <label class="option-btn"><input type="radio" name="emotion_categorical" value="4">Optimism</label>
+                        <label class="option-btn"><input type="radio" name="emotion_categorical" value="5">Frustration</label>
+                        <label class="option-btn"><input type="radio" name="emotion_categorical" value="6">None</label>
                     </div>
                     <div class="validation-error">Please select an option</div>
                 </div>
@@ -963,6 +1117,26 @@
                     <div class="likert-container">
                         <div class="likert-labels">
                             <span>No optimism</span>
+                            <span>A great deal</span>
+                        </div>
+                        <div class="likert-scale">
+                            <button class="likert-btn" data-value="1">1</button>
+                            <button class="likert-btn" data-value="2">2</button>
+                            <button class="likert-btn" data-value="3">3</button>
+                            <button class="likert-btn" data-value="4">4</button>
+                            <button class="likert-btn" data-value="5">5</button>
+                            <button class="likert-btn" data-value="6">6</button>
+                            <button class="likert-btn" data-value="7">7</button>
+                        </div>
+                    </div>
+                    <div class="validation-error">Please select a value</div>
+                </div>
+
+                <div class="question" data-field="emotion_frustration_likert">
+                    <div class="question-text">How much <strong>frustration</strong> is present in this text?</div>
+                    <div class="likert-container">
+                        <div class="likert-labels">
+                            <span>No frustration</span>
                             <span>A great deal</span>
                         </div>
                         <div class="likert-scale">
@@ -1122,6 +1296,59 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Moral Identity -->
+                <div class="question" data-field="mf_identity" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+                    <div class="question-text">Which aspect of <strong>moral identity</strong> does this text express the most?</div>
+                    <div class="question-hint">Internalization = morality as central to who you are. Symbolization = morality expressed outwardly through actions and choices.</div>
+                    <div class="options-grid">
+                        <label class="option-btn"><input type="radio" name="mf_identity" value="1">Internalization</label>
+                        <label class="option-btn"><input type="radio" name="mf_identity" value="2">Symbolization</label>
+                        <label class="option-btn"><input type="radio" name="mf_identity" value="0">Can't tell</label>
+                    </div>
+                    <div class="validation-error">Please select an option</div>
+                </div>
+
+                <!-- Moral Politics Frame -->
+                <div class="question" data-field="mf_politics_frame">
+                    <div class="question-text">Which <strong>moral-political frame</strong> does this text express the most?</div>
+                    <div class="question-hint">Nurturant Parent = empathy, care, fairness, protecting the vulnerable. Strict Father = discipline, obedience, moral strength, self-reliance.</div>
+                    <div class="options-grid">
+                        <label class="option-btn"><input type="radio" name="mf_politics_frame" value="1">Nurturant Parent</label>
+                        <label class="option-btn"><input type="radio" name="mf_politics_frame" value="2">Strict Father</label>
+                        <label class="option-btn"><input type="radio" name="mf_politics_frame" value="0">Can't tell</label>
+                    </div>
+                    <div class="validation-error">Please select an option</div>
+                </div>
+
+                <!-- Moral Foundation Orientation -->
+                <div class="question" data-field="mf_orientation">
+                    <div class="question-text">Which <strong>moral foundation orientation</strong> does this text express the most?</div>
+                    <div class="question-hint">Individualizing = individual rights regardless of group (care, justice). Binding = group cohesion (loyalty, authority, purity).</div>
+                    <div class="options-grid">
+                        <label class="option-btn"><input type="radio" name="mf_orientation" value="1">Individualizing</label>
+                        <label class="option-btn"><input type="radio" name="mf_orientation" value="2">Binding</label>
+                        <label class="option-btn"><input type="radio" name="mf_orientation" value="0">Can't tell</label>
+                    </div>
+                    <div class="validation-error">Please select an option</div>
+                </div>
+
+                <!-- Cooperative Moral Domain -->
+                <div class="question" data-field="mf_cooperative_domain">
+                    <div class="question-text">Which <strong>cooperative moral domain</strong> does this text express the most?</div>
+                    <div class="question-hint">Pick the single domain that best fits. See the Instructions panel for full definitions of each domain.</div>
+                    <div class="options-grid">
+                        <label class="option-btn"><input type="radio" name="mf_cooperative_domain" value="1">Family</label>
+                        <label class="option-btn"><input type="radio" name="mf_cooperative_domain" value="2">Group</label>
+                        <label class="option-btn"><input type="radio" name="mf_cooperative_domain" value="3">Reciprocity</label>
+                        <label class="option-btn"><input type="radio" name="mf_cooperative_domain" value="4">Deference</label>
+                        <label class="option-btn"><input type="radio" name="mf_cooperative_domain" value="5">Heroism</label>
+                        <label class="option-btn"><input type="radio" name="mf_cooperative_domain" value="6">Fairness</label>
+                        <label class="option-btn"><input type="radio" name="mf_cooperative_domain" value="7">Property</label>
+                        <label class="option-btn"><input type="radio" name="mf_cooperative_domain" value="0">Can't tell</label>
+                    </div>
+                    <div class="validation-error">Please select an option</div>
+                </div>
             </div>
 
             <!-- Political Guess Section -->
@@ -1173,6 +1400,18 @@
         </div>
     </main>
 
+    <!-- Confirmation Dialog -->
+    <div class="confirm-overlay" id="confirmOverlay">
+        <div class="confirm-box">
+            <h3>Start Fresh?</h3>
+            <p id="confirmMessage">An existing annotation file was found for this username. Starting fresh will <strong>erase all previous progress</strong>. Are you sure?</p>
+            <div class="confirm-buttons">
+                <button class="btn btn-secondary" id="confirmCancel">Cancel</button>
+                <button class="btn btn-primary" id="confirmProceed" style="background: #c45a5a;">Yes, Start Fresh</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast -->
     <div class="toast" id="toast"></div>
 
@@ -1182,7 +1421,7 @@
         let state = {
             annotatorId: '',
             data: [],
-            annotations: {},  // keyed by unique row identifier (X value)
+            annotations: {},  // keyed by unique row identifier (rowid value)
             currentIndex: 0,
             isComplete: false,
             serverMode: true  // Whether we're running with the Python server
@@ -1225,7 +1464,12 @@
             jumpBtn: $('jumpBtn'),
             instructionsBtn: $('instructionsBtn'),
             instructionsPanel: $('instructionsPanel'),
-            instructionsClose: $('instructionsClose')
+            instructionsClose: $('instructionsClose'),
+            existingSessions: $('existingSessions'),
+            sessionsList: $('sessionsList'),
+            confirmOverlay: $('confirmOverlay'),
+            confirmCancel: $('confirmCancel'),
+            confirmProceed: $('confirmProceed')
         };
 
         // ===== STATEMENT MAPPING =====
@@ -1273,14 +1517,14 @@
 
             // Parse header
             const header = parseCSVLine(lines[0]);
+            const rowidIdx = header.findIndex(h => h.toLowerCase() === 'rowid');
             const responseIdIdx = header.findIndex(h => h.toLowerCase() === 'responseid');
-            const xIdx = header.findIndex(h => h.toLowerCase() === 'x');
             const statementIdx = header.findIndex(h => h.toLowerCase() === 'statement');
             const agreeIdx = header.findIndex(h => h.toLowerCase() === 'agree');
             const describeIdx = header.findIndex(h => h.toLowerCase() === 'x_describe');
 
+            if (rowidIdx === -1) throw new Error('CSV must have "rowid" column');
             if (responseIdIdx === -1) throw new Error('CSV must have "ResponseId" column');
-            if (xIdx === -1) throw new Error('CSV must have "X" column');
             if (statementIdx === -1) throw new Error('CSV must have "statement" column');
             if (describeIdx === -1) throw new Error('CSV must have "X_describe" column');
 
@@ -1289,11 +1533,11 @@
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
                 const values = parseCSVLine(lines[i]);
-                if (values.length < Math.max(responseIdIdx, xIdx, statementIdx, describeIdx) + 1) continue;
+                if (values.length < Math.max(rowidIdx, responseIdIdx, statementIdx, describeIdx) + 1) continue;
                 
                 data.push({
+                    rowid: values[rowidIdx] || '',
                     ResponseId: values[responseIdIdx] || '',
-                    X: values[xIdx] || '',
                     statement: values[statementIdx] || '',
                     agree: agreeIdx !== -1 ? (values[agreeIdx] || '') : '',
                     X_describe: values[describeIdx] || ''
@@ -1404,6 +1648,18 @@
             return null;
         }
 
+        async function apiListUsers() {
+            try {
+                const response = await fetch(`${API_BASE}/api/list-users`);
+                if (response.ok) {
+                    return await response.json();
+                }
+            } catch (e) {
+                console.log('Could not list users');
+            }
+            return null;
+        }
+
         // ===== STORAGE =====
         async function saveState() {
             // Save to localStorage as backup
@@ -1434,9 +1690,9 @@
             localStorage.removeItem(STORAGE_KEY);
         }
 
-        // Get unique key for each row (using X since it's unique per row)
+        // Get unique key for each row (using rowid since it's unique per row)
         function getRowKey(item) {
-            return item.X;
+            return item.rowid;
         }
 
         // ===== UI FUNCTIONS =====
@@ -1514,6 +1770,9 @@
             document.querySelectorAll('input[type="radio"]').forEach(input => {
                 input.checked = false;
             });
+            document.querySelectorAll('.open-ended-input').forEach(input => {
+                input.value = '';
+            });
             document.querySelectorAll('.question').forEach(q => q.classList.remove('error'));
 
             // Load existing annotations if any
@@ -1521,6 +1780,13 @@
             if (existing) {
                 Object.entries(existing).forEach(([field, value]) => {
                     if (!value) return;
+
+                    // Open-ended text inputs
+                    const textInput = document.getElementById(`${field}_input`);
+                    if (textInput) {
+                        textInput.value = value;
+                        return;
+                    }
                     
                     // Radio buttons
                     const radio = document.querySelector(`input[name="${field}"][value="${value}"]`);
@@ -1555,11 +1821,13 @@
 
         function collectCurrentAnnotations() {
             const fields = [
+                'emotion_openended',
                 'emotion_categorical',
                 'emotion_anger_likert',
                 'emotion_joy_likert',
                 'emotion_sadness_likert',
                 'emotion_optimism_likert',
+                'emotion_frustration_likert',
                 'sentiment_categorical',
                 'sentiment_likert',
                 'mf_care',
@@ -1570,12 +1838,24 @@
                 'mf_liberty',
                 'mf_honesty',
                 'mf_selfdiscipline',
+                'mf_identity',
+                'mf_politics_frame',
+                'mf_orientation',
+                'mf_cooperative_domain',
                 'political_guess'
             ];
 
             const annotations = {};
             
             fields.forEach(field => {
+                // Check open-ended text inputs
+                const textInput = document.getElementById(`${field}_input`);
+                if (textInput) {
+                    const val = textInput.value.trim();
+                    if (val) annotations[field] = val;
+                    return;
+                }
+
                 // Check radio buttons
                 const radio = document.querySelector(`input[name="${field}"]:checked`);
                 if (radio) {
@@ -1598,11 +1878,13 @@
 
         function validateAnnotations(annotations) {
             const required = [
+                'emotion_openended',
                 'emotion_categorical',
                 'emotion_anger_likert',
                 'emotion_joy_likert',
                 'emotion_sadness_likert',
                 'emotion_optimism_likert',
+                'emotion_frustration_likert',
                 'sentiment_categorical',
                 'sentiment_likert',
                 'mf_care',
@@ -1613,6 +1895,10 @@
                 'mf_liberty',
                 'mf_honesty',
                 'mf_selfdiscipline',
+                'mf_identity',
+                'mf_politics_frame',
+                'mf_orientation',
+                'mf_cooperative_domain',
                 'political_guess'
             ];
 
@@ -1676,16 +1962,18 @@
 
         function generateCSV() {
             const headers = [
+                'rowid',
                 'ResponseId',
-                'X',
                 'statement',
                 'X_describe',
                 'annotator_id',
+                'emotion_openended',
                 'emotion_categorical',
                 'emotion_anger_likert',
                 'emotion_joy_likert',
                 'emotion_sadness_likert',
                 'emotion_optimism_likert',
+                'emotion_frustration_likert',
                 'sentiment_categorical',
                 'sentiment_likert',
                 'mf_care',
@@ -1696,6 +1984,10 @@
                 'mf_liberty',
                 'mf_honesty',
                 'mf_selfdiscipline',
+                'mf_identity',
+                'mf_politics_frame',
+                'mf_orientation',
+                'mf_cooperative_domain',
                 'political_guess'
             ];
 
@@ -1703,16 +1995,18 @@
                 const rowKey = getRowKey(item);
                 const ann = state.annotations[rowKey] || {};
                 return [
+                    escapeCSV(item.rowid),
                     escapeCSV(item.ResponseId),
-                    escapeCSV(item.X),
                     escapeCSV(item.statement),
                     escapeCSV(item.X_describe),
                     escapeCSV(state.annotatorId),
+                    escapeCSV(ann.emotion_openended || ''),
                     ann.emotion_categorical || '',
                     ann.emotion_anger_likert || '',
                     ann.emotion_joy_likert || '',
                     ann.emotion_sadness_likert || '',
                     ann.emotion_optimism_likert || '',
+                    ann.emotion_frustration_likert || '',
                     ann.sentiment_categorical || '',
                     ann.sentiment_likert || '',
                     ann.mf_care || '',
@@ -1723,6 +2017,10 @@
                     ann.mf_liberty || '',
                     ann.mf_honesty || '',
                     ann.mf_selfdiscipline || '',
+                    ann.mf_identity || '',
+                    ann.mf_politics_frame || '',
+                    ann.mf_orientation || '',
+                    ann.mf_cooperative_domain || '',
                     ann.political_guess || ''
                 ].join(',');
             });
@@ -1768,6 +2066,17 @@
 
             elements.startBtn.addEventListener('click', startAnnotation);
             elements.resumeBtn.addEventListener('click', resumeSession);
+
+            // Confirmation dialog buttons
+            elements.confirmCancel.addEventListener('click', () => {
+                elements.confirmOverlay.classList.remove('show');
+            });
+
+            elements.confirmProceed.addEventListener('click', async () => {
+                elements.confirmOverlay.classList.remove('show');
+                const username = elements.confirmOverlay.dataset.username;
+                await doStartFresh(username);
+            });
 
             // Instructions panel toggle
             elements.instructionsBtn.addEventListener('click', () => {
@@ -1837,6 +2146,13 @@
                 if (e.key === 'Enter') {
                     elements.jumpBtn.click();
                 }
+            });
+
+            // Open-ended text inputs - clear error on typing
+            document.querySelectorAll('.open-ended-input').forEach(input => {
+                input.addEventListener('input', () => {
+                    input.closest('.question')?.classList.remove('error');
+                });
             });
 
             // Option buttons (radio style)
@@ -1917,7 +2233,30 @@
         }
 
         async function startAnnotation() {
-            state.annotatorId = elements.annotatorId.value.trim();
+            const username = elements.annotatorId.value.trim();
+
+            // Check if a file already exists on the server -- guard against accidental overwrite
+            if (state.serverMode) {
+                const check = await apiCheckUser(username);
+                if (check && check.exists) {
+                    // Show confirmation dialog instead of proceeding immediately
+                    showConfirmFresh(username);
+                    return;
+                }
+            }
+
+            // No existing file -- proceed normally
+            await doStartFresh(username);
+        }
+
+        function showConfirmFresh(username) {
+            elements.confirmOverlay.classList.add('show');
+            // Store the username so the confirm handler can use it
+            elements.confirmOverlay.dataset.username = username;
+        }
+
+        async function doStartFresh(username) {
+            state.annotatorId = username;
             state.annotations = {};
             state.currentIndex = 0;
             state.isComplete = false;
@@ -2023,6 +2362,14 @@
                 `;
             }
 
+            // Check for existing sessions on the server (protects against cleared cache)
+            if (state.serverMode) {
+                const usersResult = await apiListUsers();
+                if (usersResult && usersResult.users && usersResult.users.length > 0) {
+                    displayExistingSessions(usersResult.users);
+                }
+            }
+
             // Check for existing session in localStorage
             const saved = loadState();
             if (saved && saved.data && saved.data.length > 0) {
@@ -2034,6 +2381,39 @@
                     checkStartReady();
                 }
             }
+        }
+
+        function displayExistingSessions(users) {
+            elements.existingSessions.style.display = 'block';
+            elements.sessionsList.innerHTML = '';
+
+            users.forEach(user => {
+                const card = document.createElement('div');
+                card.className = 'session-card';
+                const pct = user.total > 0 ? Math.round((user.completed / user.total) * 100) : 0;
+                card.innerHTML = `
+                    <div class="session-info">
+                        <div class="session-username">${escapeHTML(user.username)}</div>
+                        <div class="session-progress">${user.completed} / ${user.total} completed (${pct}%)</div>
+                    </div>
+                    <div class="session-resume-label">Click to resume →</div>
+                `;
+                card.addEventListener('click', () => {
+                    elements.annotatorId.value = user.username;
+                    elements.filenamePreview.textContent = `annotations_${user.username}.csv`;
+                    checkExistingUser(user.username);
+                    checkStartReady();
+                    // Scroll down to the buttons
+                    elements.buttonContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
+                elements.sessionsList.appendChild(card);
+            });
+        }
+
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
         }
 
         init();
