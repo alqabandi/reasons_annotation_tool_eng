@@ -153,7 +153,7 @@ class AnnotationHandler(http.server.SimpleHTTPRequestHandler):
                     for row in reader:
                         total += 1
                         # Check if any annotation field is filled
-                        if row.get('emotion_categorical', ''):
+                        if row.get('emotion_anxiety_likert', ''):
                             completed += 1
             except Exception:
                 pass
@@ -181,16 +181,12 @@ class AnnotationHandler(http.server.SimpleHTTPRequestHandler):
                         ann = {}
                         annotation_fields = [
                             'skip_reason',
-                            'emotion_openended',
-                            'emotion_categorical', 'emotion_anger_likert', 'emotion_joy_likert',
-                            'emotion_sadness_likert', 'emotion_optimism_likert',
-                            'emotion_frustration_likert',
+                            'emotion_anxiety_likert', 'emotion_anger_likert',
+                            'emotion_sadness_likert', 'emotion_joy_likert',
+                            'emotion_optimism_likert', 'emotion_frustration_likert',
+                            'emotion_fear_likert', 'emotion_hope_likert',
                             'sentiment_categorical', 'sentiment_likert',
-                            'mf_care', 'mf_fairness', 'mf_loyalty',
-                            'mf_authority', 'mf_purity', 'mf_liberty',
-                            'mf_honesty', 'mf_selfdiscipline',
-                            'mf_identity', 'mf_politics_frame',
-                            'mf_orientation', 'mf_cooperative_domain',
+                            'mf_best', 'mf_orientation',
                             'political_guess'
                         ]
                         for field in annotation_fields:
@@ -209,27 +205,18 @@ class AnnotationHandler(http.server.SimpleHTTPRequestHandler):
         annotation_columns = [
             'annotator_id',
             'skip_reason',
-            'emotion_openended',
-            'emotion_categorical',
+            'emotion_anxiety_likert',
             'emotion_anger_likert',
-            'emotion_joy_likert',
             'emotion_sadness_likert',
+            'emotion_joy_likert',
             'emotion_optimism_likert',
             'emotion_frustration_likert',
+            'emotion_fear_likert',
+            'emotion_hope_likert',
             'sentiment_categorical',
             'sentiment_likert',
-            'mf_care',
-            'mf_fairness',
-            'mf_loyalty',
-            'mf_authority',
-            'mf_purity',
-            'mf_liberty',
-            'mf_honesty',
-            'mf_selfdiscipline',
-            'mf_identity',
-            'mf_politics_frame',
+            'mf_best',
             'mf_orientation',
-            'mf_cooperative_domain',
             'political_guess'
         ]
         
@@ -263,27 +250,18 @@ class AnnotationHandler(http.server.SimpleHTTPRequestHandler):
         annotation_columns = [
             'annotator_id',
             'skip_reason',
-            'emotion_openended',
-            'emotion_categorical',
+            'emotion_anxiety_likert',
             'emotion_anger_likert',
-            'emotion_joy_likert',
             'emotion_sadness_likert',
+            'emotion_joy_likert',
             'emotion_optimism_likert',
             'emotion_frustration_likert',
+            'emotion_fear_likert',
+            'emotion_hope_likert',
             'sentiment_categorical',
             'sentiment_likert',
-            'mf_care',
-            'mf_fairness',
-            'mf_loyalty',
-            'mf_authority',
-            'mf_purity',
-            'mf_liberty',
-            'mf_honesty',
-            'mf_selfdiscipline',
-            'mf_identity',
-            'mf_politics_frame',
+            'mf_best',
             'mf_orientation',
-            'mf_cooperative_domain',
             'political_guess'
         ]
         all_columns = base_columns + annotation_columns

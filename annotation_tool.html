@@ -449,7 +449,7 @@
         }
 
         .question {
-            margin-bottom: 1.75rem;
+            margin-bottom: 1.5rem;
         }
 
         .question:last-child {
@@ -458,7 +458,7 @@
 
         .question-text {
             font-weight: 500;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
             color: var(--text-primary);
         }
 
@@ -647,32 +647,32 @@
         .likert-container {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.25rem;
         }
 
         .likert-labels {
             display: flex;
             justify-content: space-between;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
-            padding: 0 0.5rem;
+            padding: 0 0.25rem;
         }
 
         .likert-scale {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.35rem;
         }
 
         .likert-btn {
             flex: 1;
-            padding: 0.75rem 0;
+            padding: 0.4rem 0;
             border: 2px solid var(--border);
-            border-radius: 8px;
+            border-radius: 6px;
             background: var(--bg-secondary);
             cursor: pointer;
             transition: all 0.2s;
             font-weight: 500;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-family: inherit;
         }
 
@@ -685,6 +685,108 @@
             border-color: var(--accent-primary);
             background: var(--accent-primary);
             color: white;
+        }
+
+        /* Emotion Matrix */
+        .emotion-matrix {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .emotion-matrix .matrix-header {
+            display: flex;
+            align-items: flex-end;
+            padding: 0.6rem 0 0.3rem;
+            background: var(--bg-accent);
+        }
+
+        .emotion-matrix .matrix-label-col {
+            width: 110px;
+            min-width: 110px;
+            flex-shrink: 0;
+        }
+
+        .emotion-matrix .matrix-scale-col {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 0 0.5rem;
+            gap: 0.1rem;
+        }
+
+        .emotion-matrix .matrix-endpoints {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 0 0.25rem;
+        }
+
+        .emotion-matrix .matrix-numbers {
+            display: flex;
+        }
+
+        .emotion-matrix .matrix-numbers span {
+            flex: 1;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .emotion-matrix .matrix-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 0.35rem 0;
+            margin-bottom: 0;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .emotion-matrix .matrix-row:nth-child(odd) {
+            background: rgba(0,0,0,0.015);
+        }
+
+        .emotion-matrix .matrix-label {
+            width: 110px;
+            min-width: 110px;
+            flex-shrink: 0;
+            font-weight: 500;
+            font-size: 0.88rem;
+            padding-left: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .emotion-matrix .likert-scale {
+            flex: 1;
+            padding: 0 0.5rem;
+            gap: 0.2rem;
+        }
+
+        .emotion-matrix .likert-btn {
+            flex: 1;
+            height: 28px;
+            padding: 0;
+            border-width: 1.5px;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 36px;
+            margin: 0 auto;
+        }
+
+        .emotion-matrix .validation-error {
+            width: 100%;
+            padding-left: 110px;
+            margin-top: 0;
+            font-size: 0.75rem;
+        }
+
+        .emotion-matrix .question.error .matrix-label {
+            color: #c45a5a;
         }
 
         /* Yes/No Toggle */
@@ -1033,7 +1135,7 @@
             <h2>📖 Annotation Instructions</h2>
             
             <h3>Overview</h3>
-            <p>You will be reading short text responses and annotating them based on emotions, sentiment, moral foundations, and political inference.</p>
+            <p>You will be reading short text responses and annotating them based on emotion, sentiment, moral foundations, and political inference.</p>
             
             <h3>How to Use This Tool</h3>
             <ul>
@@ -1048,8 +1150,7 @@
             
             <h4 style="color: var(--text-primary); margin-top: 1rem;">😊 Emotions</h4>
             <ul>
-                <li><strong>Primary Emotion:</strong> Select the emotion that best represents the writer's mental state (Anger, Joy, Sadness, or Optimism)</li>
-                <li><strong>Emotion Intensity:</strong> Rate how much of each emotion (anger, joy, sadness, optimism) is present on a scale of 1-7</li>
+                <li><strong>Emotion Intensity:</strong> Rate how much of each emotion (anxiety, sadness, anger, joy, optimism, frustration, fear, hope) is present on a scale of 1-7</li>
             </ul>
             
             <h4 style="color: var(--text-primary); margin-top: 1rem;">💭 Sentiment</h4>
@@ -1059,34 +1160,23 @@
             </ul>
             
             <h4 style="color: var(--text-primary); margin-top: 1rem;">⚖️ Moral Foundations</h4>
-            <p>For each moral foundation, select "Yes" if the text expresses or relates to that value, "No" if it doesn't:</p>
+            <p>You will answer two moral foundations questions:</p>
             <ul>
-                        <li><strong>Care:</strong> Compassion, kindness, and concern for the suffering of others</li>
-                        <li><strong>Fairness:</strong> Cooperation, trustworthiness, and treating people equally</li>
-                        <li><strong>Loyalty:</strong> Faithfulness to one's group, family, or nation; not betraying others</li>
-                        <li><strong>Authority:</strong> Deference toward legitimate authorities and respect for tradition</li>
-                        <li><strong>Purity:</strong> Avoiding disgust, contamination; maintaining cleanliness and sanctity</li>
-                        <li><strong>Liberty:</strong> Individual freedom, autonomy, and resisting domination</li>
-                        <li><strong>Honesty:</strong> Being truthful, sincere, and open</li>
-                        <li><strong>Self-discipline:</strong> Persistence, self-control, and resisting temptation</li>
+                <li><strong>Most Representative Foundation:</strong> Pick the single moral foundation that best represents the text. Options:</li>
             </ul>
-            <p style="margin-top: 1rem;">You'll also answer four additional moral-framework questions:</p>
-            <ul>
-                <li><strong>Moral Identity:</strong> Does the text reflect <em>internalization</em> (morality as central to who you are) or <em>symbolization</em> (morality expressed outwardly through actions and choices)?</li>
-                <li><strong>Moral-Political Frame:</strong> Does the text lean toward a <em>nurturant parent</em> worldview (empathy, care, fairness, protecting the vulnerable) or a <em>strict father</em> worldview (discipline, obedience, moral strength, self-reliance)?</li>
-                <li><strong>Moral Foundation Orientation:</strong> Does the text emphasize <em>individualizing</em> values (individual rights, care, justice) or <em>binding</em> values (group cohesion, loyalty, authority, purity)?</li>
-                <li><strong>Cooperative Moral Domain:</strong> Which domain best fits the text? Options: Family, Group, Reciprocity, Deference, Heroism, Fairness, or Property.</li>
+            <ul style="padding-left: 3rem; margin-top: -0.5rem;">
+                <li><strong>Care:</strong> Compassion, kindness, and concern for the suffering of others</li>
+                <li><strong>Fairness:</strong> Cooperation, trustworthiness, and treating people equally</li>
+                <li><strong>Authority:</strong> Deference toward legitimate authorities and respect for tradition</li>
+                <li><strong>Loyalty:</strong> Faithfulness to one's group, family, or nation; not betraying others</li>
+                <li><strong>Purity:</strong> Avoiding disgust, contamination; maintaining cleanliness and sanctity</li>
+                <li><strong>Liberty:</strong> Individual freedom, autonomy, and resisting domination</li>
+                <li><strong>Honesty:</strong> Being truthful, sincere, and open</li>
+                <li><strong>Self-discipline:</strong> Persistence, self-control, and resisting temptation</li>
+                <li><strong>Not sure / None</strong></li>
             </ul>
-
-            <h5 style="color: var(--text-primary); margin-top: 1rem;">Cooperative Moral Domain definitions</h5>
             <ul>
-                <li><strong>Family:</strong> Care and resources for kin; solidarity with family members</li>
-                <li><strong>Group:</strong> Cooperation, coalition-building, conformity to shared norms</li>
-                <li><strong>Reciprocity:</strong> Conditional cooperation, trustworthiness, fairness in exchange</li>
-                <li><strong>Deference:</strong> Humility, obedience, respect for authority</li>
-                <li><strong>Heroism:</strong> Bravery, fortitude, asserting strength in competitive contexts</li>
-                <li><strong>Fairness:</strong> Compromise, equity, proportional sharing of contested resources</li>
-                <li><strong>Property:</strong> Respecting ownership, non-interference, stability of possession</li>
+                <li><strong>Moral Foundation Orientation:</strong> Does the text emphasize <em>individualizing</em> values (individual rights, care, justice), <em>binding</em> values (group cohesion, loyalty, authority, purity), <em>neither</em>, or <em>can't tell</em>?</li>
             </ul>
             
             <h4 style="color: var(--text-primary); margin-top: 1rem;">🗳️ Political Inference</h4>
@@ -1178,32 +1268,23 @@
                     <h2 class="section-title">Emotions</h2>
                 </div>
 
-                <div class="question" data-field="emotion_openended">
-                    <div class="question-text">In one word, what emotion best describes the state of the writer?</div>
-                    <input type="text" class="open-ended-input" id="emotion_openended_input" placeholder="e.g., frustrated, hopeful, angry…" autocomplete="off">
-                    <div class="validation-error">Please enter a word</div>
-                </div>
-
-                <div class="question" data-field="emotion_categorical">
-                    <div class="question-text">Which emotion best represents the mental state of the writer?</div>
-                    <div class="options-grid">
-                        <label class="option-btn"><input type="radio" name="emotion_categorical" value="1">Anger</label>
-                        <label class="option-btn"><input type="radio" name="emotion_categorical" value="2">Joy</label>
-                        <label class="option-btn"><input type="radio" name="emotion_categorical" value="3">Sadness</label>
-                        <label class="option-btn"><input type="radio" name="emotion_categorical" value="4">Optimism</label>
-                        <label class="option-btn"><input type="radio" name="emotion_categorical" value="5">Frustration</label>
-                        <label class="option-btn"><input type="radio" name="emotion_categorical" value="6">None</label>
-                    </div>
-                    <div class="validation-error">Please select an option</div>
-                </div>
-
-                <div class="question" data-field="emotion_anger_likert">
-                    <div class="question-text">How much <strong>anger</strong> is present in this text?</div>
-                    <div class="likert-container">
-                        <div class="likert-labels">
-                            <span>No anger</span>
-                            <span>A great deal</span>
+                <div class="question-text" style="margin-bottom: 0.75rem;">How much of each emotion is present in this text?</div>
+                <div class="emotion-matrix">
+                    <div class="matrix-header">
+                        <div class="matrix-label-col"></div>
+                        <div class="matrix-scale-col">
+                            <div class="matrix-endpoints">
+                                <span>None</span>
+                                <span>A great deal</span>
+                            </div>
+                            <div class="matrix-numbers">
+                                <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span>
+                            </div>
                         </div>
+                    </div>
+
+                    <div class="matrix-row question" data-field="emotion_anxiety_likert">
+                        <div class="matrix-label">Anxiety</div>
                         <div class="likert-scale">
                             <button class="likert-btn" data-value="1">1</button>
                             <button class="likert-btn" data-value="2">2</button>
@@ -1213,17 +1294,11 @@
                             <button class="likert-btn" data-value="6">6</button>
                             <button class="likert-btn" data-value="7">7</button>
                         </div>
+                        <div class="validation-error">Please select a value</div>
                     </div>
-                    <div class="validation-error">Please select a value</div>
-                </div>
 
-                <div class="question" data-field="emotion_joy_likert">
-                    <div class="question-text">How much <strong>joy</strong> is present in this text?</div>
-                    <div class="likert-container">
-                        <div class="likert-labels">
-                            <span>No joy</span>
-                            <span>A great deal</span>
-                        </div>
+                    <div class="matrix-row question" data-field="emotion_anger_likert">
+                        <div class="matrix-label">Anger</div>
                         <div class="likert-scale">
                             <button class="likert-btn" data-value="1">1</button>
                             <button class="likert-btn" data-value="2">2</button>
@@ -1233,17 +1308,11 @@
                             <button class="likert-btn" data-value="6">6</button>
                             <button class="likert-btn" data-value="7">7</button>
                         </div>
+                        <div class="validation-error">Please select a value</div>
                     </div>
-                    <div class="validation-error">Please select a value</div>
-                </div>
 
-                <div class="question" data-field="emotion_sadness_likert">
-                    <div class="question-text">How much <strong>sadness</strong> is present in this text?</div>
-                    <div class="likert-container">
-                        <div class="likert-labels">
-                            <span>No sadness</span>
-                            <span>A great deal</span>
-                        </div>
+                    <div class="matrix-row question" data-field="emotion_sadness_likert">
+                        <div class="matrix-label">Sadness</div>
                         <div class="likert-scale">
                             <button class="likert-btn" data-value="1">1</button>
                             <button class="likert-btn" data-value="2">2</button>
@@ -1253,17 +1322,11 @@
                             <button class="likert-btn" data-value="6">6</button>
                             <button class="likert-btn" data-value="7">7</button>
                         </div>
+                        <div class="validation-error">Please select a value</div>
                     </div>
-                    <div class="validation-error">Please select a value</div>
-                </div>
 
-                <div class="question" data-field="emotion_optimism_likert">
-                    <div class="question-text">How much <strong>optimism</strong> is present in this text?</div>
-                    <div class="likert-container">
-                        <div class="likert-labels">
-                            <span>No optimism</span>
-                            <span>A great deal</span>
-                        </div>
+                    <div class="matrix-row question" data-field="emotion_joy_likert">
+                        <div class="matrix-label">Joy</div>
                         <div class="likert-scale">
                             <button class="likert-btn" data-value="1">1</button>
                             <button class="likert-btn" data-value="2">2</button>
@@ -1273,17 +1336,11 @@
                             <button class="likert-btn" data-value="6">6</button>
                             <button class="likert-btn" data-value="7">7</button>
                         </div>
+                        <div class="validation-error">Please select a value</div>
                     </div>
-                    <div class="validation-error">Please select a value</div>
-                </div>
 
-                <div class="question" data-field="emotion_frustration_likert">
-                    <div class="question-text">How much <strong>frustration</strong> is present in this text?</div>
-                    <div class="likert-container">
-                        <div class="likert-labels">
-                            <span>No frustration</span>
-                            <span>A great deal</span>
-                        </div>
+                    <div class="matrix-row question" data-field="emotion_optimism_likert">
+                        <div class="matrix-label">Optimism</div>
                         <div class="likert-scale">
                             <button class="likert-btn" data-value="1">1</button>
                             <button class="likert-btn" data-value="2">2</button>
@@ -1293,8 +1350,50 @@
                             <button class="likert-btn" data-value="6">6</button>
                             <button class="likert-btn" data-value="7">7</button>
                         </div>
+                        <div class="validation-error">Please select a value</div>
                     </div>
-                    <div class="validation-error">Please select a value</div>
+
+                    <div class="matrix-row question" data-field="emotion_frustration_likert">
+                        <div class="matrix-label">Frustration</div>
+                        <div class="likert-scale">
+                            <button class="likert-btn" data-value="1">1</button>
+                            <button class="likert-btn" data-value="2">2</button>
+                            <button class="likert-btn" data-value="3">3</button>
+                            <button class="likert-btn" data-value="4">4</button>
+                            <button class="likert-btn" data-value="5">5</button>
+                            <button class="likert-btn" data-value="6">6</button>
+                            <button class="likert-btn" data-value="7">7</button>
+                        </div>
+                        <div class="validation-error">Please select a value</div>
+                    </div>
+
+                    <div class="matrix-row question" data-field="emotion_fear_likert">
+                        <div class="matrix-label">Fear</div>
+                        <div class="likert-scale">
+                            <button class="likert-btn" data-value="1">1</button>
+                            <button class="likert-btn" data-value="2">2</button>
+                            <button class="likert-btn" data-value="3">3</button>
+                            <button class="likert-btn" data-value="4">4</button>
+                            <button class="likert-btn" data-value="5">5</button>
+                            <button class="likert-btn" data-value="6">6</button>
+                            <button class="likert-btn" data-value="7">7</button>
+                        </div>
+                        <div class="validation-error">Please select a value</div>
+                    </div>
+
+                    <div class="matrix-row question" data-field="emotion_hope_likert">
+                        <div class="matrix-label">Hope</div>
+                        <div class="likert-scale">
+                            <button class="likert-btn" data-value="1">1</button>
+                            <button class="likert-btn" data-value="2">2</button>
+                            <button class="likert-btn" data-value="3">3</button>
+                            <button class="likert-btn" data-value="4">4</button>
+                            <button class="likert-btn" data-value="5">5</button>
+                            <button class="likert-btn" data-value="6">6</button>
+                            <button class="likert-btn" data-value="7">7</button>
+                        </div>
+                        <div class="validation-error">Please select a value</div>
+                    </div>
                 </div>
             </div>
 
@@ -1342,155 +1441,33 @@
                     <div class="section-icon moral">⚖️</div>
                     <h2 class="section-title">Moral Foundations</h2>
                 </div>
-                <div class="question-hint">Does this text express any of the following moral foundations?</div>
 
-                <div class="moral-grid">
-                    <div class="moral-item">
-                        <div class="question" data-field="mf_care">
-                            <div class="question-text">Care</div>
-                            <div class="moral-definition">Compassion, kindness, and concern for the suffering of others</div>
-                            <div class="yesno-container">
-                                <button class="yesno-btn yes" data-value="1">Yes</button>
-                                <button class="yesno-btn no" data-value="2">No</button>
-                            </div>
-                            <div class="validation-error">Please select</div>
-                        </div>
-                    </div>
-
-                    <div class="moral-item">
-                        <div class="question" data-field="mf_fairness">
-                            <div class="question-text">Fairness</div>
-                            <div class="moral-definition">Cooperation, trustworthiness, and treating people equally</div>
-                            <div class="yesno-container">
-                                <button class="yesno-btn yes" data-value="1">Yes</button>
-                                <button class="yesno-btn no" data-value="2">No</button>
-                            </div>
-                            <div class="validation-error">Please select</div>
-                        </div>
-                    </div>
-
-                    <div class="moral-item">
-                        <div class="question" data-field="mf_loyalty">
-                            <div class="question-text">Loyalty</div>
-                            <div class="moral-definition">Faithfulness to one's group, family, or nation; not betraying others</div>
-                            <div class="yesno-container">
-                                <button class="yesno-btn yes" data-value="1">Yes</button>
-                                <button class="yesno-btn no" data-value="2">No</button>
-                            </div>
-                            <div class="validation-error">Please select</div>
-                        </div>
-                    </div>
-
-                    <div class="moral-item">
-                        <div class="question" data-field="mf_authority">
-                            <div class="question-text">Authority</div>
-                            <div class="moral-definition">Deference toward legitimate authorities and respect for tradition</div>
-                            <div class="yesno-container">
-                                <button class="yesno-btn yes" data-value="1">Yes</button>
-                                <button class="yesno-btn no" data-value="2">No</button>
-                            </div>
-                            <div class="validation-error">Please select</div>
-                        </div>
-                    </div>
-
-                    <div class="moral-item">
-                        <div class="question" data-field="mf_purity">
-                            <div class="question-text">Purity</div>
-                            <div class="moral-definition">Avoiding disgust, contamination; maintaining cleanliness and sanctity</div>
-                            <div class="yesno-container">
-                                <button class="yesno-btn yes" data-value="1">Yes</button>
-                                <button class="yesno-btn no" data-value="2">No</button>
-                            </div>
-                            <div class="validation-error">Please select</div>
-                        </div>
-                    </div>
-
-                    <div class="moral-item">
-                        <div class="question" data-field="mf_liberty">
-                            <div class="question-text">Liberty</div>
-                            <div class="moral-definition">Individual freedom, autonomy, and resisting domination</div>
-                            <div class="yesno-container">
-                                <button class="yesno-btn yes" data-value="1">Yes</button>
-                                <button class="yesno-btn no" data-value="2">No</button>
-                            </div>
-                            <div class="validation-error">Please select</div>
-                        </div>
-                    </div>
-
-                    <div class="moral-item">
-                        <div class="question" data-field="mf_honesty">
-                            <div class="question-text">Honesty</div>
-                            <div class="moral-definition">Being truthful, sincere, and open</div>
-                            <div class="yesno-container">
-                                <button class="yesno-btn yes" data-value="1">Yes</button>
-                                <button class="yesno-btn no" data-value="2">No</button>
-                            </div>
-                            <div class="validation-error">Please select</div>
-                        </div>
-                    </div>
-
-                    <div class="moral-item">
-                        <div class="question" data-field="mf_selfdiscipline">
-                            <div class="question-text">Self-discipline</div>
-                            <div class="moral-definition">Persistence, self-control, and resisting temptation</div>
-                            <div class="yesno-container">
-                                <button class="yesno-btn yes" data-value="1">Yes</button>
-                                <button class="yesno-btn no" data-value="2">No</button>
-                            </div>
-                            <div class="validation-error">Please select</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Moral Identity -->
-                <div class="question" data-field="mf_identity" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
-                    <div class="question-text">Which aspect of <strong>moral identity</strong> does this text express the most?</div>
-                    <div class="question-hint">Internalization = morality as central to who you are. Symbolization = morality expressed outwardly through actions and choices.</div>
+                <div class="question" data-field="mf_best">
+                    <div class="question-text">Which single <strong>moral foundation</strong> best represents this text?</div>
+                    <div class="question-hint">Pick the one foundation that fits best. See the Instructions panel for definitions.</div>
                     <div class="options-grid">
-                        <label class="option-btn"><input type="radio" name="mf_identity" value="1">Internalization</label>
-                        <label class="option-btn"><input type="radio" name="mf_identity" value="2">Symbolization</label>
-                        <label class="option-btn"><input type="radio" name="mf_identity" value="0">Can't tell</label>
+                        <label class="option-btn"><input type="radio" name="mf_best" value="1">Care</label>
+                        <label class="option-btn"><input type="radio" name="mf_best" value="2">Fairness</label>
+                        <label class="option-btn"><input type="radio" name="mf_best" value="3">Authority</label>
+                        <label class="option-btn"><input type="radio" name="mf_best" value="4">Loyalty</label>
+                        <label class="option-btn"><input type="radio" name="mf_best" value="5">Purity</label>
+                        <label class="option-btn"><input type="radio" name="mf_best" value="6">Liberty</label>
+                        <label class="option-btn"><input type="radio" name="mf_best" value="7">Honesty</label>
+                        <label class="option-btn"><input type="radio" name="mf_best" value="8">Self-discipline</label>
+                        <label class="option-btn"><input type="radio" name="mf_best" value="9">Not sure</label>
+                        <label class="option-btn"><input type="radio" name="mf_best" value="0">None</label>
                     </div>
                     <div class="validation-error">Please select an option</div>
                 </div>
 
-                <!-- Moral Politics Frame -->
-                <div class="question" data-field="mf_politics_frame">
-                    <div class="question-text">Which <strong>moral-political frame</strong> does this text express the most?</div>
-                    <div class="question-hint">Nurturant Parent = empathy, care, fairness, protecting the vulnerable. Strict Father = discipline, obedience, moral strength, self-reliance.</div>
-                    <div class="options-grid">
-                        <label class="option-btn"><input type="radio" name="mf_politics_frame" value="1">Nurturant Parent</label>
-                        <label class="option-btn"><input type="radio" name="mf_politics_frame" value="2">Strict Father</label>
-                        <label class="option-btn"><input type="radio" name="mf_politics_frame" value="0">Can't tell</label>
-                    </div>
-                    <div class="validation-error">Please select an option</div>
-                </div>
-
-                <!-- Moral Foundation Orientation -->
-                <div class="question" data-field="mf_orientation">
+                <div class="question" data-field="mf_orientation" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
                     <div class="question-text">Which <strong>moral foundation orientation</strong> does this text express the most?</div>
                     <div class="question-hint">Individualizing = individual rights regardless of group (care, justice). Binding = group cohesion (loyalty, authority, purity).</div>
                     <div class="options-grid">
                         <label class="option-btn"><input type="radio" name="mf_orientation" value="1">Individualizing</label>
                         <label class="option-btn"><input type="radio" name="mf_orientation" value="2">Binding</label>
+                        <label class="option-btn"><input type="radio" name="mf_orientation" value="3">Neither</label>
                         <label class="option-btn"><input type="radio" name="mf_orientation" value="0">Can't tell</label>
-                    </div>
-                    <div class="validation-error">Please select an option</div>
-                </div>
-
-                <!-- Cooperative Moral Domain -->
-                <div class="question" data-field="mf_cooperative_domain">
-                    <div class="question-text">Which <strong>cooperative moral domain</strong> does this text express the most?</div>
-                    <div class="question-hint">Pick the single domain that best fits. See the Instructions panel for full definitions of each domain.</div>
-                    <div class="options-grid">
-                        <label class="option-btn"><input type="radio" name="mf_cooperative_domain" value="1">Family</label>
-                        <label class="option-btn"><input type="radio" name="mf_cooperative_domain" value="2">Group</label>
-                        <label class="option-btn"><input type="radio" name="mf_cooperative_domain" value="3">Reciprocity</label>
-                        <label class="option-btn"><input type="radio" name="mf_cooperative_domain" value="4">Deference</label>
-                        <label class="option-btn"><input type="radio" name="mf_cooperative_domain" value="5">Heroism</label>
-                        <label class="option-btn"><input type="radio" name="mf_cooperative_domain" value="6">Fairness</label>
-                        <label class="option-btn"><input type="radio" name="mf_cooperative_domain" value="7">Property</label>
-                        <label class="option-btn"><input type="radio" name="mf_cooperative_domain" value="0">Can't tell</label>
                     </div>
                     <div class="validation-error">Please select an option</div>
                 </div>
@@ -1508,7 +1485,7 @@
                     <div class="options-grid">
                         <label class="option-btn"><input type="radio" name="political_guess" value="1">Democrat</label>
                         <label class="option-btn"><input type="radio" name="political_guess" value="2">Republican</label>
-                        <label class="option-btn"><input type="radio" name="political_guess" value="3">Independent/Neither</label>
+                        <label class="option-btn"><input type="radio" name="political_guess" value="3">Independent/Other</label>
                         <label class="option-btn"><input type="radio" name="political_guess" value="4">Can't tell</label>
                     </div>
                     <div class="validation-error">Please select an option</div>
@@ -1989,27 +1966,18 @@
 
         function collectCurrentAnnotations() {
             const fields = [
-                'emotion_openended',
-                'emotion_categorical',
+                'emotion_anxiety_likert',
                 'emotion_anger_likert',
-                'emotion_joy_likert',
                 'emotion_sadness_likert',
+                'emotion_joy_likert',
                 'emotion_optimism_likert',
                 'emotion_frustration_likert',
+                'emotion_fear_likert',
+                'emotion_hope_likert',
                 'sentiment_categorical',
                 'sentiment_likert',
-                'mf_care',
-                'mf_fairness',
-                'mf_loyalty',
-                'mf_authority',
-                'mf_purity',
-                'mf_liberty',
-                'mf_honesty',
-                'mf_selfdiscipline',
-                'mf_identity',
-                'mf_politics_frame',
+                'mf_best',
                 'mf_orientation',
-                'mf_cooperative_domain',
                 'political_guess'
             ];
 
@@ -2046,27 +2014,18 @@
 
         function validateAnnotations(annotations) {
             const required = [
-                'emotion_openended',
-                'emotion_categorical',
+                'emotion_anxiety_likert',
                 'emotion_anger_likert',
-                'emotion_joy_likert',
                 'emotion_sadness_likert',
+                'emotion_joy_likert',
                 'emotion_optimism_likert',
                 'emotion_frustration_likert',
+                'emotion_fear_likert',
+                'emotion_hope_likert',
                 'sentiment_categorical',
                 'sentiment_likert',
-                'mf_care',
-                'mf_fairness',
-                'mf_loyalty',
-                'mf_authority',
-                'mf_purity',
-                'mf_liberty',
-                'mf_honesty',
-                'mf_selfdiscipline',
-                'mf_identity',
-                'mf_politics_frame',
+                'mf_best',
                 'mf_orientation',
-                'mf_cooperative_domain',
                 'political_guess'
             ];
 
@@ -2138,16 +2097,12 @@
 
             // Build an annotation object with NA for every field
             const naFields = [
-                'emotion_openended', 'emotion_categorical',
-                'emotion_anger_likert', 'emotion_joy_likert',
-                'emotion_sadness_likert', 'emotion_optimism_likert',
-                'emotion_frustration_likert',
+                'emotion_anxiety_likert', 'emotion_anger_likert',
+                'emotion_sadness_likert', 'emotion_joy_likert',
+                'emotion_optimism_likert', 'emotion_frustration_likert',
+                'emotion_fear_likert', 'emotion_hope_likert',
                 'sentiment_categorical', 'sentiment_likert',
-                'mf_care', 'mf_fairness', 'mf_loyalty',
-                'mf_authority', 'mf_purity', 'mf_liberty',
-                'mf_honesty', 'mf_selfdiscipline',
-                'mf_identity', 'mf_politics_frame',
-                'mf_orientation', 'mf_cooperative_domain',
+                'mf_best', 'mf_orientation',
                 'political_guess'
             ];
             const annotations = { _skipped: true, skip_reason: reason };
@@ -2194,27 +2149,18 @@
                 'X_describe',
                 'annotator_id',
                 'skip_reason',
-                'emotion_openended',
-                'emotion_categorical',
+                'emotion_anxiety_likert',
                 'emotion_anger_likert',
-                'emotion_joy_likert',
                 'emotion_sadness_likert',
+                'emotion_joy_likert',
                 'emotion_optimism_likert',
                 'emotion_frustration_likert',
+                'emotion_fear_likert',
+                'emotion_hope_likert',
                 'sentiment_categorical',
                 'sentiment_likert',
-                'mf_care',
-                'mf_fairness',
-                'mf_loyalty',
-                'mf_authority',
-                'mf_purity',
-                'mf_liberty',
-                'mf_honesty',
-                'mf_selfdiscipline',
-                'mf_identity',
-                'mf_politics_frame',
+                'mf_best',
                 'mf_orientation',
-                'mf_cooperative_domain',
                 'political_guess'
             ];
 
@@ -2228,27 +2174,18 @@
                     escapeCSV(item.X_describe),
                     escapeCSV(state.annotatorId),
                     escapeCSV(ann.skip_reason || ''),
-                    escapeCSV(ann.emotion_openended || ''),
-                    ann.emotion_categorical || '',
+                    ann.emotion_anxiety_likert || '',
                     ann.emotion_anger_likert || '',
-                    ann.emotion_joy_likert || '',
                     ann.emotion_sadness_likert || '',
+                    ann.emotion_joy_likert || '',
                     ann.emotion_optimism_likert || '',
                     ann.emotion_frustration_likert || '',
+                    ann.emotion_fear_likert || '',
+                    ann.emotion_hope_likert || '',
                     ann.sentiment_categorical || '',
                     ann.sentiment_likert || '',
-                    ann.mf_care || '',
-                    ann.mf_fairness || '',
-                    ann.mf_loyalty || '',
-                    ann.mf_authority || '',
-                    ann.mf_purity || '',
-                    ann.mf_liberty || '',
-                    ann.mf_honesty || '',
-                    ann.mf_selfdiscipline || '',
-                    ann.mf_identity || '',
-                    ann.mf_politics_frame || '',
+                    ann.mf_best || '',
                     ann.mf_orientation || '',
-                    ann.mf_cooperative_domain || '',
                     ann.political_guess || ''
                 ].join(',');
             });
